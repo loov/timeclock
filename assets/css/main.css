@@ -1,0 +1,15 @@
+* {
+	box-sizing: border-box;
+}
+
+body, html {
+	margin: 0;
+	padding: 0;
+	color: #333;
+
+	letter-spacing: 0.02em;
+
+	-ms-word-wrap: break-all;
+	word-wrap: break-word;
+	-webkit-font-smoothing: antialiased;
+}
