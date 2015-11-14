@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"log"
 	"net/http"
 	"os"
 )
@@ -23,6 +24,7 @@ func main() {
 
 	http.HandleFunc("/", index)
 
+	log.Println("Starting server on", *addr)
 	http.ListenAndServe(*addr, nil)
 }
 
