@@ -2,15 +2,6 @@ package project
 
 import "time"
 
-type Status string
-
-const (
-	Queued     = "Queued"
-	InProgress = "In Progress"
-	Done       = "Done"
-	Delivered  = "Delivered"
-)
-
 type Project struct {
 	Title       string
 	Customer    string //TODO: ref
@@ -18,6 +9,15 @@ type Project struct {
 	Description string
 	Status      Status
 }
+
+type Status string
+
+const (
+	Queued     Status = "Queued"
+	InProgress        = "In Progress"
+	Done              = "Done"
+	Delivered         = "Delivered"
+)
 
 //TODO: is there a better name for this?
 type Pricing struct {
@@ -31,6 +31,12 @@ type Task struct {
 	Status      Status
 }
 
+type Resource struct {
+	Name string
+	Unit Unit
+	PPU  float64 // price per unit
+}
+
 type Unit string
 
 const (
@@ -39,22 +45,10 @@ const (
 	Piece = ""
 )
 
-type Resource struct {
-	Name string
-	Unit Unit
-	PPU  float64 // price per unit
-}
-
 type Expense struct {
 	Worker   string //TODO: ref
 	Date     time.Time
 	Resource Resource
 	Units    float64
 	Price    float64
-}
-
-type Comment struct {
-	Worker  string
-	Date    time.Time
-	Comment string
 }
