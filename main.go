@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/loov/timeclock/project"
 )
@@ -71,7 +72,42 @@ func index(w http.ResponseWriter, r *http.Request) {
 		Status:      project.InProgress,
 	}
 
-	err = t.Execute(w, example)
+	expenses := []*project.Expense{
+		{
+			Worker: "John",
+			Date:   time.Now(),
+			Resource: project.Resource{
+				Name: "Work",
+				Unit: project.Hour,
+			},
+			Units: 5,
+		},
+		{
+			Worker: "Joe",
+			Date:   time.Now().Add(time.Hour),
+			Resource: project.Resource{
+				Name: "Work",
+				Unit: project.Hour,
+			},
+			Units: 4,
+		},
+		{
+			Worker: "Joe",
+			Date:   time.Now().Add(time.Hour),
+			Resource: project.Resource{
+				Name: "Bolt",
+				Unit: project.Piece,
+				PPU:  1,
+			},
+			Units: 8,
+			Price: 8,
+		},
+	}
+
+	err = t.Execute(w, map[string]interface{}{
+		"Project":  example,
+		"Expenses": expenses,
+	})
 	if err != nil {
 		log.Printf("error parsing template: %v", err)
 		internalError(w, r, err)

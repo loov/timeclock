@@ -42,7 +42,8 @@ type Unit string
 const (
 	Litre = "l"
 	Grams = "g"
-	Piece = ""
+	Hour  = "h"
+	Piece = "unit"
 )
 
 type Expense struct {
