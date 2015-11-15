@@ -61,60 +61,66 @@ func index(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	example := &project.Project{
-		Title:    "Alpha",
-		Customer: "ACME",
-		Pricing: project.Pricing{
-			Hours: 480,
-			Price: 1000,
+	info := &project.Info{
+		Project: &project.Project{
+			Title:    "Alpha",
+			Customer: "ACME",
+			Pricing: project.Pricing{
+				Hours: 480,
+				Price: 1000,
+			},
+			Description: "Implement views",
+			Status:      project.InProgress,
 		},
-		Description: "Implement views",
-		Status:      project.InProgress,
+		Activities: project.Activities{
+			{
+				Event: project.Event{
+					Worker: "John",
+					Date:   time.Now(),
+				},
+				Name:    "Welding",
+				Start:   time.Now().Add(-25 * time.Hour),
+				Finish:  time.Now().Add(-24 * time.Hour),
+				Comment: "W is done",
+			},
+			{
+				Event: project.Event{
+					Worker: "John",
+					Date:   time.Now(),
+				},
+				Name:    "Welding",
+				Start:   time.Now().Add(-2 * time.Hour),
+				Finish:  time.Now().Add(-1 * time.Hour),
+				Comment: "A, B, C are done",
+			},
+			{
+				Event: project.Event{
+					Worker: "Joe",
+					Date:   time.Now(),
+				},
+				Name:    "Boring",
+				Start:   time.Now().Add(-5 * time.Hour),
+				Finish:  time.Now().Add(-3 * time.Hour),
+				Comment: "X, Y, Z done",
+			},
+		},
+		Materials: project.Materials{
+			{
+				Event: project.Event{
+					Worker: "John",
+					Date:   time.Now(),
+				},
+				Resource: project.Resource{
+					Name: "Bolt",
+					Unit: project.Piece,
+					PPU:  3,
+				},
+				Amount: 8,
+			},
+		},
 	}
 
-	activites := []*project.Activity{
-		{
-			Event: project.Event{
-				Worker: "John",
-				Date:   time.Now(),
-			},
-			Name:    "Welding",
-			Start:   time.Now().Add(-2 * time.Hour),
-			Finish:  time.Now().Add(-1 * time.Hour),
-			Comment: "A, B, C are done",
-		},
-		{
-			Event: project.Event{
-				Worker: "Joe",
-				Date:   time.Now(),
-			},
-			Name:    "Boring",
-			Start:   time.Now().Add(-5 * time.Hour),
-			Finish:  time.Now().Add(-3 * time.Hour),
-			Comment: "X, Y, Z done",
-		},
-	}
-
-	materials := []*project.Material{
-		{
-			Event: project.Event{
-				Worker: "John",
-				Date:   time.Now(),
-			},
-			Resource: project.Resource{
-				Name: "Bolt",
-				Unit: project.Piece,
-				PPU:  3,
-			},
-			Units: 8,
-		},
-	}
-
-	err = t.Execute(w, map[string]interface{}{
-		"Project":    example,
-		"Activities": activites,
-		"Materials":  materials,
-	})
+	err = t.Execute(w, info)
 	if err != nil {
 		log.Printf("error parsing template: %v", err)
 		internalError(w, r, err)

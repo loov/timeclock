@@ -38,30 +38,55 @@
 			</div>
 			{{end}}
 
-			<div class="label">Materials:</div>
-			<div class="materials">
-				<div class="material header">
-					<div class="date">Date</div>
-					<div class="worker">Worker</div>
-					<div class="resource-name">Resource</div>
-					<div class="resource-ppu">PPU</div>
-					<div class="units">Units</div>
-					<div class="price">Price</div>
-					<div class="clear"></div>
+			{{range .GroupByDay}}
+			<div class="day">
+				<div class="date">{{.Date.Format "02-01-2006"}}</div>
+				<div class="overview">
+					{{ if .Activities }}
+					<div class="label">Activities:</div>
+					<table class="activities">
+						<thead>
+							<tr>
+								<th>Worker</th>
+								<th>Activity</th>
+								<th>Start</th>
+								<th>Finish</th>
+								<th>Duration</th>
+							</tr>
+						</thead>
+					{{range .Activities}}
+						<tr>
+							<td>{{.Worker}}</td>
+							<td>{{.Name}}</td>
+							<td>{{.Start.Format "15:04"}}</td>
+							<td>{{.Finish.Format "15:04"}}</td>
+							<td>{{.Duration}}</td>
+						</tr>
+					{{end}}
+					</table>
+					{{ end }}
+					{{ if .Materials }}
+					<div class="label">Materials</div>
+					<table class="materials">
+						<thead>
+							<th>Worker</th>
+							<th>Material</th>
+							<th>Amount</th>
+							<th>Total</th>
+						</thead>
+					{{range .Materials}}
+						<tr>
+							<td>{{.Worker}}</td>
+							<td>{{.Resource.Name}}</td>
+							<td>{{.Amount}}{{.Resource.Unit}}</td>
+							<td>{{.Total}}€</td>
+						</tr>
+					{{end}}
+					</table>
+					{{ end }}
 				</div>
-				{{range .Materials}}
-				<div class="material">
-					<div class="date">{{.Date.Format "2006-01-02 15:04"}}</div>
-					<div class="worker">{{.Worker}}</div>
-					<div class="resource-name">{{.Resource.Name}}</div>
-					<div class="resource-ppu">{{if (ne .Resource.PPU 0.0)}}{{.Resource.PPU}}€/{{.Resource.Unit}}{{end}}</div>
-					<div class="units">{{.Units}}{{.Resource.Unit}}</div>
-					<div class="price">{{if (ne .Total 0.0)}}{{.Total}}€{{end}}</div>
-
-					<div class="clear"></div>
-				</div>
-				{{end}}
 			</div>
+			{{end}}
 		</div>
 	</div>
 </body>

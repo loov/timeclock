@@ -86,25 +86,25 @@ table {
 	border: 1px solid #eee;
 }
 
-.material {
-}
-.material:hover {
-	background: #f8f8f8;
-}
-.material.header {
+.day .date {
 	font-weight: bold;
-	border-bottom: 1px solid #eee;
+	border-bottom: 1px solid #ccc;
 }
 
-.material > div {
-	float: left;
-	width: 14%;
-	height: 1.4rem;
-	line-height: 1.4rem;
-	overflow: hidden;
+.day .overview {
+	padding: 0.5rem 0;
+	margin-left: 2rem;
 }
 
-.material .date {
-	font-size: 0.6rem;
-	color: #888;
+.day table {
+	margin-bottom: 0.25rem;
+}
+
+.day table th, .day table td {
+	text-align: left;
+	padding: 0.25rem 0.5rem;
+}
+
+.day table tr:hover {
+	background: #f8f8f8;
 }

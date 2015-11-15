@@ -45,6 +45,8 @@ type Event struct {
 	Date   time.Time
 }
 
+func (ev Event) Info() Event { return ev }
+
 type Activity struct {
 	Event
 	Name    string
@@ -53,16 +55,16 @@ type Activity struct {
 	Comment string
 }
 
-func (a *Activity) Total() time.Duration {
+func (a *Activity) Duration() time.Duration {
 	return a.Finish.Sub(a.Start)
 }
 
 type Material struct {
 	Event
 	Resource Resource
-	Units    float64
+	Amount   float64
 }
 
 func (m *Material) Total() float64 {
-	return m.Resource.PPU * m.Units
+	return m.Resource.PPU * m.Amount
 }
