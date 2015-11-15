@@ -38,9 +38,9 @@
 			</div>
 			{{end}}
 
-			<div class="label">Expenses:</div>
-			<div class="expenses">
-				<div class="expense header">
+			<div class="label">Materials:</div>
+			<div class="materials">
+				<div class="material header">
 					<div class="date">Date</div>
 					<div class="worker">Worker</div>
 					<div class="resource-name">Resource</div>
@@ -49,14 +49,14 @@
 					<div class="price">Price</div>
 					<div class="clear"></div>
 				</div>
-				{{range .Expenses}}
-				<div class="expense">
+				{{range .Materials}}
+				<div class="material">
 					<div class="date">{{.Date.Format "2006-01-02 15:04"}}</div>
 					<div class="worker">{{.Worker}}</div>
 					<div class="resource-name">{{.Resource.Name}}</div>
 					<div class="resource-ppu">{{if (ne .Resource.PPU 0.0)}}{{.Resource.PPU}}€/{{.Resource.Unit}}{{end}}</div>
 					<div class="units">{{.Units}}{{.Resource.Unit}}</div>
-					<div class="price">{{if (ne .Price 0.0)}}{{.Price}}€{{end}}</div>
+					<div class="price">{{if (ne .Total 0.0)}}{{.Total}}€{{end}}</div>
 
 					<div class="clear"></div>
 				</div>

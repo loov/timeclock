@@ -72,41 +72,48 @@ func index(w http.ResponseWriter, r *http.Request) {
 		Status:      project.InProgress,
 	}
 
-	expenses := []*project.Expense{
+	activites := []*project.Activity{
 		{
-			Worker: "John",
-			Date:   time.Now(),
-			Resource: project.Resource{
-				Name: "Work",
-				Unit: project.Hour,
+			Event: project.Event{
+				Worker: "John",
+				Date:   time.Now(),
 			},
-			Units: 5,
+			Name:    "Welding",
+			Start:   time.Now().Add(-2 * time.Hour),
+			Finish:  time.Now().Add(-1 * time.Hour),
+			Comment: "A, B, C are done",
 		},
 		{
-			Worker: "Joe",
-			Date:   time.Now().Add(time.Hour),
-			Resource: project.Resource{
-				Name: "Work",
-				Unit: project.Hour,
+			Event: project.Event{
+				Worker: "Joe",
+				Date:   time.Now(),
 			},
-			Units: 4,
+			Name:    "Boring",
+			Start:   time.Now().Add(-5 * time.Hour),
+			Finish:  time.Now().Add(-3 * time.Hour),
+			Comment: "X, Y, Z done",
 		},
+	}
+
+	materials := []*project.Material{
 		{
-			Worker: "Joe",
-			Date:   time.Now().Add(time.Hour),
+			Event: project.Event{
+				Worker: "John",
+				Date:   time.Now(),
+			},
 			Resource: project.Resource{
 				Name: "Bolt",
 				Unit: project.Piece,
-				PPU:  1,
+				PPU:  3,
 			},
 			Units: 8,
-			Price: 8,
 		},
 	}
 
 	err = t.Execute(w, map[string]interface{}{
-		"Project":  example,
-		"Expenses": expenses,
+		"Project":    example,
+		"Activities": activites,
+		"Materials":  materials,
 	})
 	if err != nil {
 		log.Printf("error parsing template: %v", err)

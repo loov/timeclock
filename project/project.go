@@ -25,12 +25,6 @@ type Pricing struct {
 	Price float64
 }
 
-type Task struct {
-	Title       string
-	Description string
-	Status      Status
-}
-
 type Resource struct {
 	Name string
 	Unit Unit
@@ -46,10 +40,29 @@ const (
 	Piece = "unit"
 )
 
-type Expense struct {
-	Worker   string //TODO: ref
-	Date     time.Time
+type Event struct {
+	Worker string
+	Date   time.Time
+}
+
+type Activity struct {
+	Event
+	Name    string
+	Start   time.Time
+	Finish  time.Time
+	Comment string
+}
+
+func (a *Activity) Total() time.Duration {
+	return a.Finish.Sub(a.Start)
+}
+
+type Material struct {
+	Event
 	Resource Resource
 	Units    float64
-	Price    float64
+}
+
+func (m *Material) Total() float64 {
+	return m.Resource.PPU * m.Units
 }
