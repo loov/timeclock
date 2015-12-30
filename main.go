@@ -8,8 +8,6 @@ import (
 	"net/http"
 	"os"
 	"time"
-
-	"github.com/loov/timeclock/project"
 )
 
 var (
@@ -27,10 +25,91 @@ func main() {
 	assets := http.FileServer(http.Dir("assets"))
 	http.Handle("/assets/", http.StripPrefix("/assets/", assets))
 
-	http.HandleFunc("/", index)
+	http.HandleFunc("/worker", worker)
+	http.HandleFunc("/worker/report", report)
+	http.HandleFunc("/worker/working", working)
+	http.HandleFunc("/worker/review", review)
+	http.HandleFunc("/accountant", accountant)
+	http.HandleFunc("/projects", projects)
+	http.HandleFunc("/project/", project)
 
 	log.Println("Starting server on", *addr)
 	http.ListenAndServe(*addr, nil)
+}
+
+type Working struct {
+	Activity string
+	Started  time.Time
+}
+
+func worker(w http.ResponseWriter, r *http.Request) {
+	t, err := template.ParseFiles("start-work.html", "common.html")
+	if err != nil {
+		log.Printf("error parsing template: %v", err)
+		internalError(w, r, err)
+		return
+	}
+
+	err = t.Execute(w, nil)
+	if err != nil {
+		log.Printf("error executing template: %v", err)
+	}
+}
+
+func working(w http.ResponseWriter, r *http.Request) {
+	t, err := template.ParseFiles("working.html", "common.html")
+	if err != nil {
+		log.Printf("error parsing template: %v", err)
+		internalError(w, r, err)
+		return
+	}
+
+	err = t.Execute(w, nil)
+	if err != nil {
+		log.Printf("error executing template: %v", err)
+	}
+}
+
+func review(w http.ResponseWriter, r *http.Request) {
+	t, err := template.ParseFiles("review.html", "common.html")
+	if err != nil {
+		log.Printf("error parsing template: %v", err)
+		internalError(w, r, err)
+		return
+	}
+
+	err = t.Execute(w, nil)
+	if err != nil {
+		log.Printf("error executing template: %v", err)
+	}
+}
+
+func accountant(w http.ResponseWriter, r *http.Request) {
+	t, err := template.ParseFiles("accountant.html", "common.html")
+	if err != nil {
+		log.Printf("error parsing template: %v", err)
+		internalError(w, r, err)
+		return
+	}
+
+	err = t.Execute(w, nil)
+	if err != nil {
+		log.Printf("error executing template: %v", err)
+	}
+}
+
+func report(w http.ResponseWriter, r *http.Request) {
+	t, err := template.ParseFiles("report.html", "common.html")
+	if err != nil {
+		log.Printf("error parsing template: %v", err)
+		internalError(w, r, err)
+		return
+	}
+
+	err = t.Execute(w, nil)
+	if err != nil {
+		log.Printf("error executing template: %v", err)
+	}
 }
 
 func internalError(w http.ResponseWriter, r *http.Request, err error) {
@@ -53,74 +132,31 @@ func internalError(w http.ResponseWriter, r *http.Request, err error) {
 	w.Write([]byte(page))
 }
 
-func index(w http.ResponseWriter, r *http.Request) {
-	t, err := template.ParseFiles("index.html")
+func projects(w http.ResponseWriter, r *http.Request) {
+	t, err := template.ParseFiles("projects.html", "common.html")
 	if err != nil {
 		log.Printf("error parsing template: %v", err)
 		internalError(w, r, err)
 		return
 	}
 
-	info := &project.Info{
-		Project: &project.Project{
-			Title:    "Alpha",
-			Customer: "ACME",
-			Pricing: project.Pricing{
-				Hours: 480,
-				Price: 1000,
-			},
-			Description: "Implement views",
-			Status:      project.InProgress,
-		},
-		Activities: project.Activities{
-			{
-				Event: project.Event{
-					Worker: "John",
-					Date:   time.Now(),
-				},
-				Name:    "Welding",
-				Start:   time.Now().Add(-25 * time.Hour),
-				Finish:  time.Now().Add(-24 * time.Hour),
-				Comment: "W is done",
-			},
-			{
-				Event: project.Event{
-					Worker: "John",
-					Date:   time.Now(),
-				},
-				Name:    "Welding",
-				Start:   time.Now().Add(-2 * time.Hour),
-				Finish:  time.Now().Add(-1 * time.Hour),
-				Comment: "A, B, C are done",
-			},
-			{
-				Event: project.Event{
-					Worker: "Joe",
-					Date:   time.Now(),
-				},
-				Name:    "Boring",
-				Start:   time.Now().Add(-5 * time.Hour),
-				Finish:  time.Now().Add(-3 * time.Hour),
-				Comment: "X, Y, Z done",
-			},
-		},
-		Materials: project.Materials{
-			{
-				Event: project.Event{
-					Worker: "John",
-					Date:   time.Now(),
-				},
-				Resource: project.Resource{
-					Name: "Bolt",
-					Unit: project.Piece,
-					PPU:  3,
-				},
-				Amount: 8,
-			},
-		},
+	err = t.Execute(w, nil)
+	if err != nil {
+		log.Printf("error parsing template: %v", err)
+		internalError(w, r, err)
+		return
+	}
+}
+
+func project(w http.ResponseWriter, r *http.Request) {
+	t, err := template.ParseFiles("project.html", "common.html")
+	if err != nil {
+		log.Printf("error parsing template: %v", err)
+		internalError(w, r, err)
+		return
 	}
 
-	err = t.Execute(w, info)
+	err = t.Execute(w, nil)
 	if err != nil {
 		log.Printf("error parsing template: %v", err)
 		internalError(w, r, err)

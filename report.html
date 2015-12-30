@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+	{{template "head"}}
+	<title>Worker</title>
+</head>
+<body>
+	{{template "header"}}
+	<div class="limit-width content">
+		<h2>Day Report</h2>
+		<table>
+			<tr><td>Day</td><td><input type="date" value=""></td></tr>
+			<tr><td>Start</td><td><input type="text" value="8:00"></td></tr>
+			<tr><td>End</td><td><input type="text" value="18:10"></td></tr>
+			<tr><td>Hours</td><td>9:30 / Breaks 30min</tr>
+		</table>
+		<br>
+		<table>
+			<thead>
+				<tr>
+					<th>ID</th>
+					<th>Activity</th>
+					<th>Hours</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tr>
+				<td title="Upgrade of watering system">15113</td>
+				<td><input type="text" name="activity" list="activities"></td>
+				<td><input type="text" value="5:30"></td>
+			</tr>
+			<tr>
+				<td>15113</td>
+				<td><input type="text" name="activity" list="activities" value="welding"></td>
+				<td><input type="text" value="1:00"></td>
+			</tr>
+			<tr>
+				<td>19241</td>
+				<td><input type="text" name="activity" list="activities" value="welding"></td>
+				<td><input type="text" value="2:00"></td>
+			</tr>
+			<tr>
+				<td>91324</td>
+				<td><input type="text" name="activity" list="activities"></td>
+				<td><input type="text" value="0:10"></td>
+			</tr>
+			<tr>
+				<td><select name="project" id="" value="15113">
+					<option value="15113">15113</option>
+					<option value="15219">15219</option>
+				</select></td>
+				<td><input type="text" name="activity" list="activities"></td>
+				<td><input type="text" value="0:30"></td>
+			</tr>
+			<tr>
+				<td><button>+</button></td>
+				<td></td>
+				<td>0:20</td>
+			</tr>
+			<tr></tr>
+			<tr>
+				<td colspan="100"><button style="float:right">Confirm</button></td>
+			</tr>
+		</table>
+
+		<datalist id="projects">
+			<option value="15113">15113: Upgrade of watering system</option>
+			<option value="15219">15219: Covers floatation</option>
+		</datalist>
+		<datalist id="activities">
+			<option value="welding">
+			<option value="plumbing">
+			<option value="plateworks">
+		</datalist>
+	</div>
+</body>
+</html>

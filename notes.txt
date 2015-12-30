@@ -1,0 +1,13 @@
+clocking per 30min
+
+-1h for long day
+~50 projects
+
+notifications for missed day reports?? (tech)
+adjustments to day reports
+
+statistics:
+1. worker -> hours
+2. project completion (progress weekly)
+
+issue -> decrease hours -> resubmit
