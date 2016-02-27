@@ -1,60 +1,52 @@
-<!DOCTYPE html>
-<html>
-<head>
-	{{template "head"}}
-	<title>Worker</title>
-</head>
-<body>
-	{{template "header"}}
-	<div class="limit-width content">
-		<h2>15113: Upgrade of watering system</h2>
-		<div class="label">Info:</div>
-		<div>
-			<table>
-				<tr><td><b>Customer</b></td><td>ACME</td></tr>
-				<tr><td><b>Status</b></td><td>In progress</td></tr>
-				<tr><td><b>Hours</b></td><td>120 / 480</td></tr>
-				<tr><td><b>Progress</b></td><td>[[TODO]]</td></tr>
-			</table>
-		</div>
+{{template "head" . }}
 
-		<div class="label">Description:</div>
-		<div class="description">
-			<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Cupiditate aliquid iste quod iure necessitatibus ducimus, ipsam, eos eaque, reprehenderit similique voluptate rerum possimus eveniet nisi praesentium veritatis porro quia reiciendis.</p>
-			<p>Quod fuga soluta magni velit distinctio, sequi voluptate recusandae aspernatur voluptates. Explicabo quo similique unde obcaecati nulla nihil quis iure maxime ducimus, deserunt aliquid iste provident, non ullam vero. Veritatis.</p>
-			<p>Ab cum iste quia, dolor dolorum molestias corporis est accusantium iusto, cupiditate maxime quisquam minus voluptatem fuga minima totam cumque! Nulla molestiae necessitatibus, ex quia modi eum unde repellendus repudiandae!</p>
-			<p>Explicabo vero modi facilis fugit, quos eius quam at eos eaque provident, nihil. Eaque repellat, non quia cumque provident praesentium, itaque, tempora ab ratione reprehenderit ea dolor est impedit eveniet.</p>
-			<p>Perspiciatis suscipit asperiores odio veniam quasi nostrum, nihil obcaecati expedita quae. Dolorem obcaecati dicta dolores ipsa saepe officia minima, quisquam temporibus, eligendi quidem tempore facilis qui suscipit, numquam officiis molestiae.</p>
-		</div>
+<h2>15113: Upgrade of watering system</h2>
+<div class="label">Info:</div>
+<div>
+	<table>
+		<tr><td><b>Customer</b></td><td>ACME</td></tr>
+		<tr><td><b>Status</b></td><td>In progress</td></tr>
+		<tr><td><b>Hours</b></td><td>120 / 480</td></tr>
+		<tr><td><b>Progress</b></td><td>[[TODO]]</td></tr>
+	</table>
+</div>
 
-		<div class="label">History:</div>
-		<table class="project-history">
-			<col width="15%"><col width="10%"><col width="10%"><col>
-			<thead>
-				<tr>
-					<th>Date</th>
-					<th>Worker</th>
-					<th></th>
-					<th></th>
-				</tr>
-			</thead>
-			<tr><td>30-12-2015</td><td>John</td><td>8h</td><td>Welding</td></tr>
-			<tr><td>30-12-2015</td><td>Jim</td><td>8h</td><td>Boring</td></tr>
-			<tr><td>30-12-2015</td><td>Joe</td><td>8h</td><td>Boring</td></tr>
-			<tr class="issue"><td>30-12-2015</td><td>Joe</td><td></td><td colspan=100>Issue: missing parts</td></tr>
-			<tr><td>27-12-2015</td><td>John</td><td>8h</td><td>Welding</td></tr>
-			<tr><td>27-12-2015</td><td>Jim</td><td>8h</td><td>Boring</td></tr>
-			<tr><td>27-12-2015</td><td>Joe</td><td>8h</td><td>Boring</td></tr>
-			<tr class="issue"><td>27-12-2015</td><td>Jim</td><td></td><td colspan=100>Issue: missing parts</td></tr>
-			<tr><td>26-12-2015</td><td>John</td><td>8h</td><td>Welding</td></tr>
-			<tr><td>26-12-2015</td><td>Jim</td><td>8h</td><td>Boring</td></tr>
-			<tr><td>26-12-2015</td><td>Joe</td><td>8h</td><td>Boring</td></tr>
-			<tr><td>25-12-2015</td><td>John</td><td>8h</td><td>Welding</td></tr>
-			<tr><td>25-12-2015</td><td>Jim</td><td>8h</td><td>Boring</td></tr>
-			<tr><td>25-12-2015</td><td>Joe</td><td>8h</td><td>Boring</td></tr>
-		</table>
+<div class="label">Description:</div>
+<div class="description">
+	<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Cupiditate aliquid iste quod iure necessitatibus ducimus, ipsam, eos eaque, reprehenderit similique voluptate rerum possimus eveniet nisi praesentium veritatis porro quia reiciendis.</p>
+	<p>Quod fuga soluta magni velit distinctio, sequi voluptate recusandae aspernatur voluptates. Explicabo quo similique unde obcaecati nulla nihil quis iure maxime ducimus, deserunt aliquid iste provident, non ullam vero. Veritatis.</p>
+	<p>Ab cum iste quia, dolor dolorum molestias corporis est accusantium iusto, cupiditate maxime quisquam minus voluptatem fuga minima totam cumque! Nulla molestiae necessitatibus, ex quia modi eum unde repellendus repudiandae!</p>
+	<p>Explicabo vero modi facilis fugit, quos eius quam at eos eaque provident, nihil. Eaque repellat, non quia cumque provident praesentium, itaque, tempora ab ratione reprehenderit ea dolor est impedit eveniet.</p>
+	<p>Perspiciatis suscipit asperiores odio veniam quasi nostrum, nihil obcaecati expedita quae. Dolorem obcaecati dicta dolores ipsa saepe officia minima, quisquam temporibus, eligendi quidem tempore facilis qui suscipit, numquam officiis molestiae.</p>
+</div>
 
-		<div class="clear"></div>
-	</div>
-</body>
-</html>
+<div class="label">History:</div>
+<table class="project-history">
+	<col width="15%"><col width="10%"><col width="10%"><col>
+	<thead>
+		<tr>
+			<th>Date</th>
+			<th>Worker</th>
+			<th></th>
+			<th></th>
+		</tr>
+	</thead>
+	<tr><td>30-12-2015</td><td>John</td><td>8h</td><td>Welding</td></tr>
+	<tr><td>30-12-2015</td><td>Jim</td><td>8h</td><td>Boring</td></tr>
+	<tr><td>30-12-2015</td><td>Joe</td><td>8h</td><td>Boring</td></tr>
+	<tr class="issue"><td>30-12-2015</td><td>Joe</td><td></td><td colspan=100>Issue: missing parts</td></tr>
+	<tr><td>27-12-2015</td><td>John</td><td>8h</td><td>Welding</td></tr>
+	<tr><td>27-12-2015</td><td>Jim</td><td>8h</td><td>Boring</td></tr>
+	<tr><td>27-12-2015</td><td>Joe</td><td>8h</td><td>Boring</td></tr>
+	<tr class="issue"><td>27-12-2015</td><td>Jim</td><td></td><td colspan=100>Issue: missing parts</td></tr>
+	<tr><td>26-12-2015</td><td>John</td><td>8h</td><td>Welding</td></tr>
+	<tr><td>26-12-2015</td><td>Jim</td><td>8h</td><td>Boring</td></tr>
+	<tr><td>26-12-2015</td><td>Joe</td><td>8h</td><td>Boring</td></tr>
+	<tr><td>25-12-2015</td><td>John</td><td>8h</td><td>Welding</td></tr>
+	<tr><td>25-12-2015</td><td>Jim</td><td>8h</td><td>Boring</td></tr>
+	<tr><td>25-12-2015</td><td>Joe</td><td>8h</td><td>Boring</td></tr>
+</table>
+
+<div class="clear"></div>
+
+{{template "footer" . }}

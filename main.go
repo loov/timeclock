@@ -25,13 +25,14 @@ func main() {
 	assets := http.FileServer(http.Dir("assets"))
 	http.Handle("/assets/", http.StripPrefix("/assets/", assets))
 
-	http.HandleFunc("/worker", worker)
-	http.HandleFunc("/worker/report", report)
-	http.HandleFunc("/worker/working", working)
-	http.HandleFunc("/worker/review", review)
-	http.HandleFunc("/accountant", accountant)
-	http.HandleFunc("/projects", projects)
-	http.HandleFunc("/project/", project)
+	http.HandleFunc("/worker", Template("start-work.html", nil))
+	http.HandleFunc("/worker/report", Template("report.html", nil))
+	http.HandleFunc("/worker/working", Template("working.html", nil))
+	http.HandleFunc("/worker/review", Template("review.html", nil))
+	http.HandleFunc("/accountant", Template("accountant.html", nil))
+	http.HandleFunc("/projects", Template("projects.html", nil))
+	http.HandleFunc("/project/", Template("project.html", nil))
+	http.HandleFunc("/", Template("index.html", nil))
 
 	log.Println("Starting server on", *addr)
 	http.ListenAndServe(*addr, nil)
@@ -42,73 +43,19 @@ type Working struct {
 	Started  time.Time
 }
 
-func worker(w http.ResponseWriter, r *http.Request) {
-	t, err := template.ParseFiles("start-work.html", "common.html")
-	if err != nil {
-		log.Printf("error parsing template: %v", err)
-		internalError(w, r, err)
-		return
-	}
+func Template(name string, data interface{}) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		t, err := template.ParseFiles(name, "common.html")
+		if err != nil {
+			log.Printf("error parsing template: %v", err)
+			internalError(w, r, err)
+			return
+		}
 
-	err = t.Execute(w, nil)
-	if err != nil {
-		log.Printf("error executing template: %v", err)
-	}
-}
-
-func working(w http.ResponseWriter, r *http.Request) {
-	t, err := template.ParseFiles("working.html", "common.html")
-	if err != nil {
-		log.Printf("error parsing template: %v", err)
-		internalError(w, r, err)
-		return
-	}
-
-	err = t.Execute(w, nil)
-	if err != nil {
-		log.Printf("error executing template: %v", err)
-	}
-}
-
-func review(w http.ResponseWriter, r *http.Request) {
-	t, err := template.ParseFiles("review.html", "common.html")
-	if err != nil {
-		log.Printf("error parsing template: %v", err)
-		internalError(w, r, err)
-		return
-	}
-
-	err = t.Execute(w, nil)
-	if err != nil {
-		log.Printf("error executing template: %v", err)
-	}
-}
-
-func accountant(w http.ResponseWriter, r *http.Request) {
-	t, err := template.ParseFiles("accountant.html", "common.html")
-	if err != nil {
-		log.Printf("error parsing template: %v", err)
-		internalError(w, r, err)
-		return
-	}
-
-	err = t.Execute(w, nil)
-	if err != nil {
-		log.Printf("error executing template: %v", err)
-	}
-}
-
-func report(w http.ResponseWriter, r *http.Request) {
-	t, err := template.ParseFiles("report.html", "common.html")
-	if err != nil {
-		log.Printf("error parsing template: %v", err)
-		internalError(w, r, err)
-		return
-	}
-
-	err = t.Execute(w, nil)
-	if err != nil {
-		log.Printf("error executing template: %v", err)
+		err = t.Execute(w, data)
+		if err != nil {
+			log.Printf("error executing template: %v", err)
+		}
 	}
 }
 
@@ -130,36 +77,4 @@ func internalError(w http.ResponseWriter, r *http.Request, err error) {
 `, message)
 	w.WriteHeader(http.StatusInternalServerError)
 	w.Write([]byte(page))
-}
-
-func projects(w http.ResponseWriter, r *http.Request) {
-	t, err := template.ParseFiles("projects.html", "common.html")
-	if err != nil {
-		log.Printf("error parsing template: %v", err)
-		internalError(w, r, err)
-		return
-	}
-
-	err = t.Execute(w, nil)
-	if err != nil {
-		log.Printf("error parsing template: %v", err)
-		internalError(w, r, err)
-		return
-	}
-}
-
-func project(w http.ResponseWriter, r *http.Request) {
-	t, err := template.ParseFiles("project.html", "common.html")
-	if err != nil {
-		log.Printf("error parsing template: %v", err)
-		internalError(w, r, err)
-		return
-	}
-
-	err = t.Execute(w, nil)
-	if err != nil {
-		log.Printf("error parsing template: %v", err)
-		internalError(w, r, err)
-		return
-	}
 }

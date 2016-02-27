@@ -1,31 +1,21 @@
-<!DOCTYPE html>
-<html>
-<head>
-	{{template "head"}}
-	<title>Worker</title>
-</head>
-<body>
-	{{template "header"}}
-	<div class="limit-width">
-		<div class="label">Pending :</div>
+{{template "head" . }}
+<div class="label">Pending :</div>
 
-		<table>
-			<tr style="background: #0f0">
-				<td>15113</td>
-				<td>12 may 2016 - 17 may 2016</td>
-				<td>ACCEPTED</td>
-			</tr>
-			<tr>
-				<td>15113</td>
-				<td>05 may 2016 - 10 may 2016</td>
-				<td>PENDING</td>
-			</tr>
-			<tr style="background: #f00">
-				<td>15113</td>
-				<td>12 may 2016 - 17 may 2016</td>
-				<td>DECLINED</td>
-			</tr>
-		</table>
-	</div>
-</body>
-</html>
+<table>
+	<tr style="background: #0f0">
+		<td>15113</td>
+		<td>12 may 2016 - 17 may 2016</td>
+		<td>ACCEPTED</td>
+	</tr>
+	<tr>
+		<td>15113</td>
+		<td>05 may 2016 - 10 may 2016</td>
+		<td>PENDING</td>
+	</tr>
+	<tr style="background: #f00">
+		<td>15113</td>
+		<td>12 may 2016 - 17 may 2016</td>
+		<td>DECLINED</td>
+	</tr>
+</table>
+{{template "footer" . }}
