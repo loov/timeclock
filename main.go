@@ -8,6 +8,8 @@ import (
 	"net/http"
 	"os"
 	"time"
+
+	"github.com/loov/timeclock/project/projects-sql"
 )
 
 var (
@@ -22,6 +24,11 @@ func main() {
 		*addr = host + ":" + port
 	}
 
+	projects, err := projects.New("main.db")
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	assets := http.FileServer(http.Dir("assets"))
 	http.Handle("/assets/", http.StripPrefix("/assets/", assets))
 
@@ -32,7 +39,9 @@ func main() {
 	http.HandleFunc("/accountant", Template("accountant.html", nil))
 	http.HandleFunc("/projects", Template("projects.html", nil))
 	http.HandleFunc("/project/", Template("project.html", nil))
-	http.HandleFunc("/", Template("index.html", nil))
+	http.HandleFunc("/", Template("index.html",
+		map[string]interface{}{"Projects": projects.List()},
+	))
 
 	log.Println("Starting server on", *addr)
 	http.ListenAndServe(*addr, nil)

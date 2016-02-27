@@ -3,7 +3,7 @@ package project
 import (
 	"time"
 
-	"github.com/loov/workclock/user"
+	"github.com/loov/timeclock/user"
 )
 
 type Status string
@@ -22,8 +22,11 @@ type Project struct {
 	Status      Status
 
 	Engineers []user.ID
+	Estimate  time.Duration
 
-	Estimate time.Duration
+	Created   time.Time
+	Modified  time.Time
+	Completed time.Time
 }
 
 type Projects interface {
