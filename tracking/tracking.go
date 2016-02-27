@@ -8,12 +8,12 @@ import (
 )
 
 type Activity struct {
-	Project   project.ID
-	Worker    user.ID
-	Activity  string
-	Start     time.Time
-	Finish    time.Time
-	Processed bool
+	Project  project.ID
+	Worker   user.ID
+	Activity string
+	Start    time.Time
+	Finish   time.Time
+	Reported bool
 }
 
 // TODO: attach to user

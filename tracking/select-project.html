@@ -6,6 +6,15 @@
 	<a href="/tracking/project/{{.ID}}">{{.ID}}: {{.Caption}}</a>
 {{end}}
 </div>
+{{if .UnreportedActivities}}
 <div class="label">Unreported work:</div>
-<div class="todo">table of current work overview</div>
+<div>
+	<!-- TODO: add direct link for reporting -->
+	<table>
+		{{range .UnreportedActivities}}
+		<tr><td><b>{{.Project}}</b></td><td>{{.Activity}}</td><td>{{.Start.Format "2006-01-02 15:04"}} - {{.Finish.Format "15:04"}}</td></tr>
+		{{end}}
+	</table>
+</div>
+{{end}}
 {{template "footer" . }}

@@ -15,8 +15,8 @@ type Tracker interface {
 }
 
 type Activities interface {
-	Unprocessed() ([]Activity, error)
-	UnprocessedByUser(user user.ID) ([]Activity, error)
+	Unreported() ([]Activity, error)
+	UnreportedByUser(user user.ID) ([]Activity, error)
 
 	MarkProcessed(activity []Activity) error
 }
@@ -51,8 +51,8 @@ func (server *Server) ServeSelectProject(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	// get current user
-	unreported, err := server.Activities.Unprocessed()
+	// get actual logged in user
+	unreported, err := server.Activities.UnreportedByUser(0)
 	if err != nil {
 		log.Printf("error loading unprocessed activities: %v", err)
 		server.Presenter.InternalError(w, r, err)
