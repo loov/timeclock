@@ -54,4 +54,15 @@ func New(connection string) (*DB, error) {
 	}, nil
 }
 
-func (db *DB) List() []project.Project { return db.projects }
+func (db *DB) List() ([]project.Project, error) {
+	return db.projects, nil
+}
+
+func (db *DB) ByID(id project.ID) (project.Project, error) {
+	for _, p := range db.projects {
+		if p.ID == id {
+			return p, nil
+		}
+	}
+	return project.Project{}, project.ErrNotExist
+}

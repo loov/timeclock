@@ -1,0 +1,19 @@
+{{template "head" . }}
+
+<h2>Projects</h2>
+<div class="actions">
+	{{range .Projects}}
+	<a href="/project/{{.ID}}">{{.ID}}: {{.Caption}}</a>
+	{{end}}
+</div>
+
+{{if .InactiveProjects}}
+<h2>Inactive Projects</h2>
+<div class="actions">
+	{{range .InactiveProjects}}
+	<a href="/project/{{.ID}}">{{.ID}}: {{.Caption}}</a>
+	{{end}}
+</div>
+{{end}}
+
+{{template "footer" . }}

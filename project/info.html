@@ -1,0 +1,45 @@
+{{template "head" . }}
+
+<h2>{{.Project.ID}}: {{.Project.Caption}}</h2>
+<div class="label">Info:</div>
+<div>
+	<table>
+		<tr><td><b>Customer</b></td><td>{{.Project.Customer}}</td></tr>
+		<tr><td><b>Status</b></td><td>{{.Project.Status}}</td></tr>
+		<tr><td><b>Estimate</b></td><td>{{.Project.Estimate}}</td></tr>
+	</table>
+</div>
+
+<div class="label">Description:</div>
+<div class="description"><p>{{.Project.Description}}</p></div>
+
+<div class="label">History:</div>
+<table class="project-history">
+	<col width="15%"><col width="10%"><col width="10%"><col>
+	<thead>
+		<tr>
+			<th>Date</th>
+			<th>Worker</th>
+			<th></th>
+			<th></th>
+		</tr>
+	</thead>
+	<tr><td>30-12-2015</td><td>John</td><td>8h</td><td>Welding</td></tr>
+	<tr><td>30-12-2015</td><td>Jim</td><td>8h</td><td>Boring</td></tr>
+	<tr><td>30-12-2015</td><td>Joe</td><td>8h</td><td>Boring</td></tr>
+	<tr class="issue"><td>30-12-2015</td><td>Joe</td><td></td><td colspan=100>Issue: missing parts</td></tr>
+	<tr><td>27-12-2015</td><td>John</td><td>8h</td><td>Welding</td></tr>
+	<tr><td>27-12-2015</td><td>Jim</td><td>8h</td><td>Boring</td></tr>
+	<tr><td>27-12-2015</td><td>Joe</td><td>8h</td><td>Boring</td></tr>
+	<tr class="issue"><td>27-12-2015</td><td>Jim</td><td></td><td colspan=100>Issue: missing parts</td></tr>
+	<tr><td>26-12-2015</td><td>John</td><td>8h</td><td>Welding</td></tr>
+	<tr><td>26-12-2015</td><td>Jim</td><td>8h</td><td>Boring</td></tr>
+	<tr><td>26-12-2015</td><td>Joe</td><td>8h</td><td>Boring</td></tr>
+	<tr><td>25-12-2015</td><td>John</td><td>8h</td><td>Welding</td></tr>
+	<tr><td>25-12-2015</td><td>Jim</td><td>8h</td><td>Boring</td></tr>
+	<tr><td>25-12-2015</td><td>Joe</td><td>8h</td><td>Boring</td></tr>
+</table>
+
+<div class="clear"></div>
+
+{{template "footer" . }}
