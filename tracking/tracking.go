@@ -3,10 +3,9 @@ package tracking
 import (
 	"time"
 
-	"github.com/loov/workclock/user"
+	"github.com/loov/timeclock/project"
+	"github.com/loov/timeclock/user"
 )
-
-type ActivityID int64
 
 type Activity struct {
 	Project   project.ID
@@ -17,15 +16,10 @@ type Activity struct {
 	Processed bool
 }
 
-type Service interface {
-	SelectProject(user user.ID, project project.ID)
-	SelectActivity(user user.ID, project project.ID, activity string)
-	FinishActivity(user user.ID, project project.ID, activity string)
-}
-
-type Activities interface {
-	Unprocessed() []Activity
-	UnprocessedByUser(user user.ID) []Activity
-
-	MarkProcessed(activity []ActivityID)
+// TODO: attach to user
+var ActivityNames = []string{
+	"welding",
+	"plumbing",
+	"plateworks",
+	"other",
 }

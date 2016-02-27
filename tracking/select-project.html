@@ -2,8 +2,9 @@
 <h2>Work tracking</h2>
 <div class="label">Select project:</div>
 <div class="actions">
-	<a href="/worker/working">15113: Upgrade of watering system</a>
-	<a href="/worker/working">15219: Covers floatation</a>
+{{range .Projects}}
+	<a href="/tracking/project/{{.ID}}">{{.ID}}: {{.Caption}}</a>
+{{end}}
 </div>
 <div class="label">Unreported work:</div>
 <div class="todo">table of current work overview</div>

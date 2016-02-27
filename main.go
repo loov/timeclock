@@ -11,6 +11,9 @@ import (
 
 	"github.com/loov/timeclock/project"
 	"github.com/loov/timeclock/project/projects-sql"
+
+	"github.com/loov/timeclock/tracking"
+	"github.com/loov/timeclock/tracking/activities-sql"
 )
 
 var (
@@ -25,21 +28,29 @@ func main() {
 		*addr = host + ":" + port
 	}
 
+	templates := Templates{}
+
 	ProjectDB, err := projects.New("main.db")
 	if err != nil {
 		log.Fatal(err)
 	}
+	Project := project.NewServer(templates, ProjectDB)
 
-	Project := project.NewServer(Templates{}, ProjectDB)
+	ActivitiesDB, err := activities.New("main.db")
+	if err != nil {
+		log.Fatal(err)
+	}
+	Tracking := tracking.NewServer(templates, ActivitiesDB, ActivitiesDB, ProjectDB)
 
 	assets := http.FileServer(http.Dir("assets"))
 	http.Handle("/assets/", http.StripPrefix("/assets/", assets))
 
-	http.HandleFunc("/worker", Template("start-work.html", nil))
-	http.HandleFunc("/worker/report", Template("report.html", nil))
-	http.HandleFunc("/worker/working", Template("working.html", nil))
 	http.HandleFunc("/worker/review", Template("review.html", nil))
 	http.HandleFunc("/accountant", Template("accountant.html", nil))
+
+	http.HandleFunc("/tracking/project", Tracking.ServeSelectProject)
+	http.HandleFunc("/tracking/active", Tracking.ServeActiveProject)
+	http.HandleFunc("/tracking/project/", Tracking.ServeSelectActivity)
 
 	http.HandleFunc("/projects", Project.ServeList)
 	http.HandleFunc("/project/", Project.ServeProjectInfo)

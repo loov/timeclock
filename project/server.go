@@ -49,9 +49,8 @@ func (server *Server) ServeProjectInfo(w http.ResponseWriter, r *http.Request) {
 
 	project, err := server.Projects.ByID(id)
 	if err == ErrNotExist {
-		server.Presenter.Present(w, r, "project/unknown.html", map[string]interface{}{
-			"Project": Project{ID: id},
-		})
+		//TODO: redirect to select-project.html with flash error
+		server.Presenter.InternalError(w, r, err)
 		return
 	}
 	if err != nil {
