@@ -1,4 +1,5 @@
 {{template "head" . }}
+
 <h2>Work tracking</h2>
 <div class="label">Select project:</div>
 <div class="actions">
@@ -6,6 +7,7 @@
 	<a href="/tracking/project/{{.ID}}">{{.ID}}: {{.Caption}}</a>
 {{end}}
 </div>
+
 {{if .UnreportedActivities}}
 <div class="label">Unreported work:</div>
 <div>
@@ -17,4 +19,5 @@
 	</table>
 </div>
 {{end}}
+
 {{template "footer" . }}

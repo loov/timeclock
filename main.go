@@ -9,11 +9,11 @@ import (
 	"os"
 	"time"
 
+	timeclockdb "github.com/loov/timeclock/db"
+
 	"github.com/loov/timeclock/project"
-	"github.com/loov/timeclock/project/projects-sql"
 
 	"github.com/loov/timeclock/tracking"
-	"github.com/loov/timeclock/tracking/activities-sql"
 )
 
 var (
@@ -30,17 +30,13 @@ func main() {
 
 	templates := Templates{}
 
-	ProjectDB, err := projects.New("main.db")
+	DB, err := timeclockdb.New("main.db")
 	if err != nil {
 		log.Fatal(err)
 	}
-	Project := project.NewServer(templates, ProjectDB)
 
-	ActivitiesDB, err := activities.New("main.db")
-	if err != nil {
-		log.Fatal(err)
-	}
-	Tracking := tracking.NewServer(templates, ActivitiesDB, ActivitiesDB, ProjectDB)
+	Project := project.NewServer(templates, DB.Projects())
+	Tracking := tracking.NewServer(templates, DB.Tracker(), DB.Activities(), DB.Projects())
 
 	assets := http.FileServer(http.Dir("assets"))
 	http.Handle("/assets/", http.StripPrefix("/assets/", assets))

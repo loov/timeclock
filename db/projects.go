@@ -1,4 +1,4 @@
-package projects
+package db
 
 import (
 	"time"
@@ -7,10 +7,31 @@ import (
 	"github.com/loov/timeclock/user"
 )
 
-var _ project.Projects = &DB{}
+func (db *DB) Projects() project.Projects {
+	return &Projects{
+		list: []project.Project{
+			upgradeofwater,
+			coversfloatation,
+		},
+	}
+}
 
-type DB struct {
-	projects []project.Project
+type Projects struct {
+	list []project.Project
+}
+
+func (projects *Projects) List() ([]project.Project, error) {
+	return projects.list, nil
+}
+
+func (projects *Projects) ByID(id project.ID) (project.Project, error) {
+	for _, p := range projects.list {
+		if p.ID == id {
+			return p, nil
+		}
+	}
+
+	return project.Project{ID: id}, project.ErrNotExist
 }
 
 var day = 24 * 60 * 60 * time.Second
@@ -43,26 +64,4 @@ var coversfloatation = project.Project{
 	Created:   time.Now().Add(-day * 3),
 	Modified:  time.Now().Add(-day * 1),
 	Completed: time.Time{},
-}
-
-func New(connection string) (*DB, error) {
-	return &DB{
-		projects: []project.Project{
-			upgradeofwater,
-			coversfloatation,
-		},
-	}, nil
-}
-
-func (db *DB) List() ([]project.Project, error) {
-	return db.projects, nil
-}
-
-func (db *DB) ByID(id project.ID) (project.Project, error) {
-	for _, p := range db.projects {
-		if p.ID == id {
-			return p, nil
-		}
-	}
-	return project.Project{}, project.ErrNotExist
 }

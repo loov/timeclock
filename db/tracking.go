@@ -1,4 +1,4 @@
-package activities
+package db
 
 import (
 	"time"
@@ -8,23 +8,24 @@ import (
 	"github.com/loov/timeclock/user"
 )
 
-var (
-	_ tracking.Activities = &Activities{}
-	_ tracking.Tracker    = &Activities{}
-)
+type Tracker struct{}
+
+func (db *DB) Tracker() tracking.Tracker {
+	return &Tracker{}
+}
+
+func (_ Tracker) SelectActivity(user user.ID, project project.ID, activity string) error {
+	return nil
+}
+
+func (_ Tracker) FinishActivity(user user.ID, project project.ID, activity string) error {
+	return nil
+}
 
 type Activities struct{}
 
-func New(connection string) (*Activities, error) {
-	return &Activities{}, nil
-}
+func (db *DB) Activities() tracking.Activities { return &Activities{} }
 
-func (_ Activities) SelectActivity(user user.ID, project project.ID, activity string) error {
-	return nil
-}
-func (_ Activities) FinishActivity(user user.ID, project project.ID, activity string) error {
-	return nil
-}
 func (_ Activities) Unreported() ([]tracking.Activity, error) {
 	return []tracking.Activity{
 		{
@@ -35,6 +36,7 @@ func (_ Activities) Unreported() ([]tracking.Activity, error) {
 		},
 	}, nil
 }
+
 func (_ Activities) UnreportedByUser(user user.ID) ([]tracking.Activity, error) {
 	return []tracking.Activity{
 		{
