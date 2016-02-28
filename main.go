@@ -39,9 +39,9 @@ func main() {
 	assets := http.FileServer(http.Dir("assets"))
 	http.Handle("/assets/", http.StripPrefix("/assets/", assets))
 
-	http.HandleFunc("/tracking/project", Tracking.ServeSelectProject)
-	http.HandleFunc("/tracking/active", Tracking.ServeActiveProject)
-	http.HandleFunc("/tracking/project/", Tracking.ServeSelectActivity)
+	http.HandleFunc("/track/project", Tracking.ServeSelectProject)
+	http.HandleFunc("/track/active", Tracking.ServeActiveProject)
+	http.HandleFunc("/track/project/", Tracking.ServeSelectActivity)
 
 	http.HandleFunc("/projects", Project.ServeList)
 	http.HandleFunc("/project/add", Project.ServeAdd)
