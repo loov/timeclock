@@ -168,11 +168,16 @@ table td {
 .content .actions.actions-fit > a {
 	float: left;
 	border-bottom: 0;
-	width: 25%;
+	width: 23%;
+	margin-right: 3px;
 
 	text-overflow: ellipsis;
 	overflow: hidden;
 	white-space: nowrap;
+
+	background: #fff;
+	border: 1px solid #e0e0e0;
+	box-shadow: 1px 1px 2.3px rgba(0, 0, 0, 0.2);
 }
 
 @media(max-width: 600px) {
@@ -213,3 +218,7 @@ table td {
 .content .project-history tr.issue {
 	background: #faa;
 }
+
+/* Form */
+.content form {}
+.content form table td > * { width: 100%; }

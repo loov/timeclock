@@ -41,7 +41,7 @@ func (server *Server) ServeList(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-func (server *Server) ServeProjectInfo(w http.ResponseWriter, r *http.Request) {
+func (server *Server) ServeInfo(w http.ResponseWriter, r *http.Request) {
 	id := ID(r.FormValue("id"))
 	if id == "" {
 		id = ID(path.Base(r.URL.Path))
@@ -61,5 +61,11 @@ func (server *Server) ServeProjectInfo(w http.ResponseWriter, r *http.Request) {
 
 	server.Presenter.Present(w, r, "project/info.html", map[string]interface{}{
 		"Project": project,
+	})
+}
+
+func (server *Server) ServeAdd(w http.ResponseWriter, r *http.Request) {
+	server.Presenter.Present(w, r, "project/add.html", map[string]interface{}{
+		"Project": &Project{},
 	})
 }
