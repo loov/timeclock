@@ -1,13 +1,16 @@
 package main
 
 import (
+	"compress/gzip"
 	"flag"
 	"fmt"
 	"html/template"
+	"io"
 	"log"
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 
 	timeclockdb "github.com/loov/timeclock/db"
@@ -85,7 +88,9 @@ func (templates Templates) InternalError(w http.ResponseWriter, r *http.Request,
 	w.WriteHeader(http.StatusInternalServerError)
 	w.Write([]byte(page))
 }
+
 func (templates Templates) Present(w http.ResponseWriter, r *http.Request, name string, data interface{}) {
+	w.Header().Set("Content-Type", "text/html")
 	t, err := template.ParseFiles(name, "common.html")
 	if err != nil {
 		log.Printf("error parsing template: %v", err)
@@ -93,7 +98,17 @@ func (templates Templates) Present(w http.ResponseWriter, r *http.Request, name 
 		return
 	}
 
-	err = t.Execute(w, data)
+	var dest io.Writer = w
+	if strings.Contains(r.Header.Get("Accept-Encoding"), "gzip") {
+		gz, err := gzip.NewWriterLevel(w, gzip.BestCompression)
+		if err == nil {
+			w.Header().Set("Content-Encoding", "gzip")
+			defer gz.Close()
+			dest = gz
+		}
+	}
+
+	err = t.Execute(dest, data)
 	if err != nil {
 		log.Printf("error executing template: %v", err)
 	}
