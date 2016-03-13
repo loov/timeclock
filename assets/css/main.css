@@ -222,3 +222,25 @@ table td {
 /* Form */
 .content form {}
 .content form table td > * { width: 100%; }
+
+.content form .checklist {
+	max-height: 10rem;
+	padding: 2px;
+	overflow-y: auto;
+	border: 1px solid #a9a9a9;
+}
+
+.content form .checklist div {
+	cursor: pointer;
+}
+.content form .checklist div:hover {
+	background: #eee;
+}
+.content form .checklist div input {
+	float: left;
+	width: 1rem;
+}
+.content form .checklist div label {
+	display: block;
+	width: 100%;
+}
