@@ -10,6 +10,8 @@ import (
 	"time"
 
 	timeclockdb "github.com/loov/timeclock/db"
+
+	"github.com/loov/timeclock/dayreport"
 	"github.com/loov/timeclock/project"
 	"github.com/loov/timeclock/tracking"
 )
@@ -35,6 +37,7 @@ func main() {
 
 	Project := project.NewServer(templates, DB.Projects())
 	Tracking := tracking.NewServer(templates, DB.Tracker(), DB.Activities(), DB.Projects())
+	DayReport := dayreport.NewServer(templates, DB.Activities(), DB.DayReports())
 
 	assets := http.FileServer(http.Dir("assets"))
 	http.Handle("/assets/", http.StripPrefix("/assets/", assets))
@@ -47,6 +50,9 @@ func main() {
 	http.HandleFunc("/project/add", Project.ServeAdd)
 	http.HandleFunc("/project/", Project.ServeInfo)
 	http.HandleFunc("/", Project.ServeList)
+
+	http.HandleFunc("/day/submit", DayReport.ServeSubmit)
+	http.HandleFunc("/day/reports", DayReport.ServeList)
 
 	http.HandleFunc("/worker/review", Template("review.html", nil))
 	http.HandleFunc("/accountant", Template("accountant.html", nil))
