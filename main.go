@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"path/filepath"
 	"time"
 
 	timeclockdb "github.com/loov/timeclock/db"
@@ -56,6 +57,8 @@ func main() {
 
 	http.HandleFunc("/worker/review", Template("review.html", nil))
 	http.HandleFunc("/accountant", Template("accountant.html", nil))
+
+	http.HandleFunc("/favicon.ico", ServeFavIcon)
 
 	log.Println("Starting server on", *addr)
 	http.ListenAndServe(*addr, nil)
@@ -135,4 +138,8 @@ func internalError(w http.ResponseWriter, r *http.Request, err error) {
 `, message)
 	w.WriteHeader(http.StatusInternalServerError)
 	w.Write([]byte(page))
+}
+
+func ServeFavIcon(w http.ResponseWriter, r *http.Request) {
+	http.ServeFile(w, r, filepath.FromSlash("assets/favicon.png"))
 }
