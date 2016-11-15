@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"log"
 	"net/http"
+	"sync"
 
 	"github.com/loov/timeclock/db"
 )
@@ -28,11 +29,16 @@ type Server struct {
 	Templates Templates
 	DB        *db.DB
 
-	CurrentActivity string
+	mu              sync.Mutex
+	currentActivity string
 }
 
 func NewServer(templates Templates, db *db.DB) *Server {
-	return &Server{templates, db, "Welding"}
+	server := &Server{}
+	server.Templates = templates
+	server.DB = db
+	server.currentActivity = "Welding"
+	return server
 }
 
 func (server *Server) handleSelectActivity(w http.ResponseWriter, r *http.Request) error {
@@ -54,7 +60,9 @@ func (server *Server) handleSelectActivity(w http.ResponseWriter, r *http.Reques
 
 	nextActivity := r.Form.Get("select-activity")
 	if nextActivity != "" {
-		server.CurrentActivity = nextActivity
+		server.mu.Lock()
+		server.currentActivity = nextActivity
+		server.mu.Unlock()
 	} else {
 		// TODO: invalid activity
 	}
@@ -99,11 +107,15 @@ func (server *Server) ServeSelectActivity(w http.ResponseWriter, r *http.Request
 		Activities      []string
 	}
 
+	server.mu.Lock()
+	currentActivity := server.currentActivity
+	server.mu.Unlock()
+
 	server.Templates.Present(w, r, "tracking/select-activity.html", &Data{
 		PostError:    postError.Value,
 		RequestToken: requestToken,
 
-		CurrentActivity: server.CurrentActivity,
+		CurrentActivity: currentActivity,
 		Activities:      []string{"Plumbing", "Welding", "Construction"},
 	})
 }
