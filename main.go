@@ -1,22 +1,11 @@
 package main
 
 import (
-	"compress/gzip"
 	"flag"
-	"fmt"
-	"html/template"
-	"io"
 	"log"
 	"net/http"
 	"os"
 	"path/filepath"
-	"strings"
-	"time"
-
-	"github.com/loov/timeclock/dayreport"
-	"github.com/loov/timeclock/db"
-	"github.com/loov/timeclock/project"
-	"github.com/loov/timeclock/tracking"
 )
 
 var (
@@ -30,35 +19,36 @@ func main() {
 	if host != "" || port != "" {
 		*addr = host + ":" + port
 	}
+	/*
+		templates := Templates{}
 
-	templates := Templates{}
+		DB, err := db.New("main.db")
+		if err != nil {
+			log.Fatal(err)
+		}
 
-	DB, err := db.New("main.db")
-	if err != nil {
-		log.Fatal(err)
-	}
+		Project := project.NewServer(templates, DB.Projects())
+		Tracking := tracking.NewServer(templates, DB.Tracker(), DB.Activities(), DB.Projects())
+		DayReport := dayreport.NewServer(templates, DB.Activities(), DB.DayReports())
 
-	Project := project.NewServer(templates, DB.Projects())
-	Tracking := tracking.NewServer(templates, DB.Tracker(), DB.Activities(), DB.Projects())
-	DayReport := dayreport.NewServer(templates, DB.Activities(), DB.DayReports())
+		assets := http.FileServer(http.Dir("assets"))
+		http.Handle("/assets/", http.StripPrefix("/assets/", assets))
 
-	assets := http.FileServer(http.Dir("assets"))
-	http.Handle("/assets/", http.StripPrefix("/assets/", assets))
+		http.HandleFunc("/track/project", Tracking.ServeSelectProject)
+		http.HandleFunc("/track/active", Tracking.ServeActiveProject)
+		http.HandleFunc("/track/project/", Tracking.ServeSelectActivity)
 
-	http.HandleFunc("/track/project", Tracking.ServeSelectProject)
-	http.HandleFunc("/track/active", Tracking.ServeActiveProject)
-	http.HandleFunc("/track/project/", Tracking.ServeSelectActivity)
+		http.HandleFunc("/projects", Project.ServeList)
+		http.HandleFunc("/project/add", Project.ServeAdd)
+		http.HandleFunc("/project/", Project.ServeInfo)
+		http.HandleFunc("/", Project.ServeList)
 
-	http.HandleFunc("/projects", Project.ServeList)
-	http.HandleFunc("/project/add", Project.ServeAdd)
-	http.HandleFunc("/project/", Project.ServeInfo)
-	http.HandleFunc("/", Project.ServeList)
+		http.HandleFunc("/day/submit", DayReport.ServeSubmit)
+		http.HandleFunc("/day/reports", DayReport.ServeList)
 
-	http.HandleFunc("/day/submit", DayReport.ServeSubmit)
-	http.HandleFunc("/day/reports", DayReport.ServeList)
-
-	http.HandleFunc("/worker/review", Template("review.html", nil))
-	http.HandleFunc("/accountant", Template("accountant.html", nil))
+		http.HandleFunc("/worker/review", Template("review.html", nil))
+		http.HandleFunc("/accountant", Template("accountant.html", nil))
+	*/
 
 	http.HandleFunc("/favicon.ico", ServeFavIcon)
 
@@ -66,6 +56,11 @@ func main() {
 	http.ListenAndServe(*addr, nil)
 }
 
+func ServeFavIcon(w http.ResponseWriter, r *http.Request) {
+	http.ServeFile(w, r, filepath.FromSlash("assets/favicon.png"))
+}
+
+/*
 type Templates struct{}
 
 func (templates Templates) InternalError(w http.ResponseWriter, r *http.Request, err error) {
@@ -157,3 +152,4 @@ func internalError(w http.ResponseWriter, r *http.Request, err error) {
 func ServeFavIcon(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, filepath.FromSlash("assets/favicon.png"))
 }
+*/

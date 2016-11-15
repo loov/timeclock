@@ -1,19 +1,8 @@
-{{define "header"}}
-<div id="header">
+{{define "navigation"}}
+<div id="navigation">
 	<div class="limit-width">
-		<div id="status">
-			<span class="label">Working on </span><a href="/track/current" class="value working-on">15113 Welding</a>
-			<a class="profile" href="#">Egon <span class="stats">40h</span></a>
-			<div class="clear"></div>
-		</div>
 		<div class="menu">
-			<a class="active" href="/track/project">Track</a>
-			<a href="/day/submit">Submit</a>
-			<a href="/day/reports">Day Reports</a>
-			<a href="/work/review">Review</a>
-			<a href="/work/reviews">Reviews</a>
-			<a href="/projects">Projects</a>
-			<a href="/users">Users</a>
+			<a class="active" href="/track">Track</a>
 			<div class="clear"></div>
 		</div>
 	</div>
@@ -27,13 +16,12 @@
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
 	<link rel="stylesheet" href="/assets/css/main.css">
 	<link rel="icon" href="/assets/favicon.png" type="image/png"/>
 	<title>Timeclock</title>
 </head>
 <body>
-	{{template "header"}}
+	{{template "navigation"}}
 	<div class="limit-width content">
 {{end}}
 
