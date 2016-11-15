@@ -51,3 +51,25 @@ table {
 table td {
 	padding: 0.1em 0.2em;
 }
+
+/* ACTIONS */
+
+.actions > input {
+	display: block;
+	background: #fff;
+	
+	padding: 1em 1em;
+	border: 1px solid transparent;
+	border-bottom: 1px solid #ccc;
+	width: 100%;
+
+	cursor: pointer;
+}
+
+.actions > input:hover {
+	border: 1px solid #46A8FF;
+}
+
+.actions > input.active {
+	background: #CFF9AA;
+}

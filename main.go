@@ -1,11 +1,19 @@
 package main
 
 import (
+	"compress/gzip"
 	"flag"
+	"fmt"
+	"html/template"
+	"io"
 	"log"
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
+
+	"github.com/loov/timeclock/db"
+	"github.com/loov/timeclock/tracking"
 )
 
 var (
@@ -19,6 +27,21 @@ func main() {
 	if host != "" || port != "" {
 		*addr = host + ":" + port
 	}
+
+	DB, err := db.New("main.db")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	templates := Templates{}
+
+	Tracking := tracking.NewServer(templates, DB)
+
+	assets := http.FileServer(http.Dir("assets"))
+	http.Handle("/assets/", http.StripPrefix("/assets/", assets))
+
+	http.HandleFunc("/", Tracking.ServeSelectActivity)
+
 	/*
 		templates := Templates{}
 
@@ -31,8 +54,7 @@ func main() {
 		Tracking := tracking.NewServer(templates, DB.Tracker(), DB.Activities(), DB.Projects())
 		DayReport := dayreport.NewServer(templates, DB.Activities(), DB.DayReports())
 
-		assets := http.FileServer(http.Dir("assets"))
-		http.Handle("/assets/", http.StripPrefix("/assets/", assets))
+
 
 		http.HandleFunc("/track/project", Tracking.ServeSelectProject)
 		http.HandleFunc("/track/active", Tracking.ServeActiveProject)
@@ -60,7 +82,6 @@ func ServeFavIcon(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, filepath.FromSlash("assets/favicon.png"))
 }
 
-/*
 type Templates struct{}
 
 func (templates Templates) InternalError(w http.ResponseWriter, r *http.Request, err error) {
@@ -107,6 +128,8 @@ func (templates Templates) Present(w http.ResponseWriter, r *http.Request, name 
 		log.Printf("error executing template: %v", err)
 	}
 }
+
+/*
 
 type Working struct {
 	Activity string

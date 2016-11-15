@@ -1,0 +1,14 @@
+{{template "head" . }}
+{{with $data := . }}
+<form method="post">
+	<div class="actions actions-fit">
+		{{range $activity := $data.Activities}}
+			<input {{if (eq $activity $data.CurrentActivity)}}class="active" {{end}} type="submit" name="select-activity" value="{{$activity}}"></input>
+		{{end}}
+		<div class="clear"></div>
+	</div>
+
+</form>
+{{end}}
+
+{{template "footer" . }}
