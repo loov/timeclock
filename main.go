@@ -13,15 +13,14 @@ import (
 	"strings"
 	"time"
 
-	timeclockdb "github.com/loov/timeclock/db"
-
 	"github.com/loov/timeclock/dayreport"
+	"github.com/loov/timeclock/db"
 	"github.com/loov/timeclock/project"
 	"github.com/loov/timeclock/tracking"
 )
 
 var (
-	addr = flag.String("listen", ":8000", "http server `address`")
+	addr = flag.String("listen", ":80", "http server `address`")
 )
 
 func main() {
@@ -34,7 +33,7 @@ func main() {
 
 	templates := Templates{}
 
-	DB, err := timeclockdb.New("main.db")
+	DB, err := db.New("main.db")
 	if err != nil {
 		log.Fatal(err)
 	}
