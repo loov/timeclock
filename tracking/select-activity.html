@@ -1,6 +1,13 @@
 {{template "head" . }}
 {{with $data := . }}
+
 <form method="post">
+	{{ if $data.PostError }}
+	<div class="error">{{$data.PostError}}</div>
+	{{ end }}
+
+	<input type="hidden" name="request-token" value="{{$data.RequestToken}}"/>
+
 	<div class="actions actions-fit">
 		{{range $activity := $data.Activities}}
 			<input {{if (eq $activity $data.CurrentActivity)}}class="active" {{end}} type="submit" name="select-activity" value="{{$activity}}"></input>

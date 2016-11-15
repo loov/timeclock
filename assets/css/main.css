@@ -52,7 +52,15 @@ table td {
 	padding: 0.1em 0.2em;
 }
 
-/* ACTIONS */
+/* errors */
+.error {
+	display: block;
+	background: #fee;
+	padding: 1em 1em;
+	border: 1px solid #fcc;
+}
+
+/* actions */
 
 .actions > input {
 	display: block;
