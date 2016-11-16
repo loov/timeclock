@@ -10,8 +10,9 @@
 
 	<div class="actions actions-fit">
 		{{range $activity := $data.Activities}}
-			<input {{if (eq $activity $data.CurrentActivity)}}class="active" {{end}} type="submit" name="select-activity" value="{{$activity}}"></input>
+			<button {{if (eq $activity $data.CurrentActivity)}}class="active" {{end}} type="submit" name="select-activity" value="{{$activity}}">{{$activity}}</button>
 		{{end}}
+		<button type="submit" name="select-activity" value="">Finish</button>
 		<div class="clear"></div>
 	</div>
 </form>

@@ -62,7 +62,7 @@ table td {
 
 /* actions */
 
-.actions > input {
+.actions > button {
 	display: block;
 	background: #fff;
 	
@@ -74,10 +74,10 @@ table td {
 	cursor: pointer;
 }
 
-.actions > input:hover {
+.actions > button:hover {
 	border: 1px solid #46A8FF;
 }
 
-.actions > input.active {
+.actions > button.active {
 	background: #CFF9AA;
 }

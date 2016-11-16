@@ -54,13 +54,17 @@ func (server *Server) selectActivity(activity string) {
 	now := time.Now()
 	if len(server.jobs) > 0 {
 		last := &server.jobs[len(server.jobs)-1]
-		last.Finish = now
+		if last.Finish.IsZero() {
+			last.Finish = now
+		}
 	}
 
-	server.jobs = append(server.jobs, Job{
-		Activity: activity,
-		Start:    time.Now(),
-	})
+	if activity != "" {
+		server.jobs = append(server.jobs, Job{
+			Activity: activity,
+			Start:    time.Now(),
+		})
+	}
 }
 
 func (server *Server) clonejobs() []Job {
@@ -88,7 +92,13 @@ func (server *Server) currentActivity() string {
 	if len(server.jobs) == 0 {
 		return ""
 	}
-	return server.jobs[len(server.jobs)-1].Activity
+
+	last := &server.jobs[len(server.jobs)-1]
+	if last.Finish.IsZero() {
+		return last.Activity
+	}
+
+	return ""
 }
 
 func NewServer(templates Templates, db *db.DB) *Server {
@@ -116,11 +126,8 @@ func (server *Server) handleSelectActivity(w http.ResponseWriter, r *http.Reques
 	}
 
 	nextActivity := r.Form.Get("select-activity")
-	if nextActivity != "" {
-		server.selectActivity(nextActivity)
-	} else {
-		// TODO: invalid activity
-	}
+	// TODO: validate next activity value
+	server.selectActivity(nextActivity)
 
 	return nil
 }
