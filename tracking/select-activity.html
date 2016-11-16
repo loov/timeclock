@@ -17,18 +17,29 @@
 </form>
 
 <div>
-	<label>Jobs</label><br>
-	{{ range $job := $data.Jobs }}
-	<div>{{$job.Activity}}: [{{$job.Start}}, {{$job.Finish}}]</div>
-	{{end}}
+	<label><b>Jobs</b></label><br>
+	<table>
+		{{ range $job := $data.Jobs }}
+		<tr>
+			<td>{{$job.Activity}}</td>
+			<td>{{$job.Start.Format "2006-01-02T15:04:05Z07:00"}}</td>
+			<td>{{$job.Finish.Format "2006-01-02T15:04:05Z07:00"}}</td>
+		</tr>
+		{{end}}
+	</table>
 </div>
 
 
 <div>
-	<label>Summary</label><br>
-	{{ range $activity, $duration := $data.JobSummary }}
-	<div>{{$activity}}: {{$duration}}</div>
-	{{end}}
+	<label><b>Summary</b></label><br>
+	<table>
+		{{ range $activity, $duration := $data.JobSummary }}
+		<tr>
+			<td>{{$activity}}</td>
+			<td>{{$duration}}</td>
+		</tr>
+		{{end}}
+	</table>
 </div>
 {{end}}
 
