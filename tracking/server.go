@@ -40,6 +40,13 @@ type Job struct {
 	Finish   time.Time
 }
 
+func (job *Job) Duration() time.Duration {
+	if job.Finish.IsZero() {
+		return time.Now().Sub(job.Start)
+	}
+	return job.Finish.Sub(job.Start)
+}
+
 func (server *Server) selectActivity(activity string) {
 	server.mu.Lock()
 	defer server.mu.Unlock()
@@ -61,6 +68,17 @@ func (server *Server) clonejobs() []Job {
 	defer server.mu.Unlock()
 
 	return append([]Job{}, server.jobs...)
+}
+
+func (server *Server) summarizejobs() map[string]time.Duration {
+	server.mu.Lock()
+	defer server.mu.Unlock()
+
+	durations := map[string]time.Duration{}
+	for _, job := range server.jobs {
+		durations[job.Activity] += job.Duration()
+	}
+	return durations
 }
 
 func (server *Server) currentActivity() string {
@@ -143,6 +161,8 @@ func (server *Server) ServeSelectActivity(w http.ResponseWriter, r *http.Request
 		CurrentActivity string
 		Activities      []string
 		Jobs            []Job
+
+		JobSummary map[string]time.Duration
 	}
 
 	server.Templates.Present(w, r, "tracking/select-activity.html", &Data{
@@ -152,5 +172,6 @@ func (server *Server) ServeSelectActivity(w http.ResponseWriter, r *http.Request
 		CurrentActivity: server.currentActivity(),
 		Activities:      []string{"Plumbing", "Welding", "Construction"},
 		Jobs:            server.clonejobs(),
+		JobSummary:      server.summarizejobs(),
 	})
 }

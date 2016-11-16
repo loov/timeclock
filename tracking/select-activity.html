@@ -22,6 +22,14 @@
 	<div>{{$job.Activity}}: [{{$job.Start}}, {{$job.Finish}}]</div>
 	{{end}}
 </div>
+
+
+<div>
+	<label>Summary</label><br>
+	{{ range $activity, $duration := $data.JobSummary }}
+	<div>{{$activity}}: {{$duration}}</div>
+	{{end}}
+</div>
 {{end}}
 
 {{template "footer" . }}
