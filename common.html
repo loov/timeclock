@@ -1,9 +1,11 @@
-{{define "navigation"}}
-<div id="navigation">
-	<div class="limit-width">
-		<div class="menu">
-			<a class="active" href="/track/project">Track</a>
-			<div class="clear"></div>
+{{define "header"}}
+<div id="header">
+	<div class="container">
+		<div class="row menu">
+			<div class="menu-item active"><a href="/">Alpha</a></div>
+			<div class="menu-item"><a href="/">Beta</a></div>
+			<div class="menu-item"><a href="/">Gamma</a></div>
+			<div class="menu-item"><a href="/">Delta</a></div>
 		</div>
 	</div>
 </div>
@@ -16,16 +18,28 @@
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<!-- <link href="//fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css"> -->
+
+	<link rel="stylesheet" href="/assets/css/normalize.css">
+	<link rel="stylesheet" href="/assets/css/skeleton.css">
 	<link rel="stylesheet" href="/assets/css/main.css">
+
 	<link rel="icon" href="/assets/favicon.png" type="image/png"/>
 	<title>Timeclock</title>
 </head>
 <body>
-	{{template "navigation"}}
-	<div class="limit-width content">
+	{{template "header"}}
+	<div class="container">
 {{end}}
 
 {{define "footer"}}
+	</div>
+
+	<div id="footer">
+		<div class="container">
+			<div class="row"></div>
+		</div>
 	</div>
 </body>
 </html>
