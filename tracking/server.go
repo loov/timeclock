@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"sync"
+	"time"
 
 	"github.com/loov/timeclock/db"
 )
@@ -29,15 +30,53 @@ type Server struct {
 	Templates Templates
 	DB        *db.DB
 
-	mu              sync.Mutex
-	currentActivity string
+	mu   sync.Mutex
+	jobs []Job
+}
+
+type Job struct {
+	Activity string
+	Start    time.Time
+	Finish   time.Time
+}
+
+func (server *Server) selectActivity(activity string) {
+	server.mu.Lock()
+	defer server.mu.Unlock()
+
+	now := time.Now()
+	if len(server.jobs) > 0 {
+		last := &server.jobs[len(server.jobs)-1]
+		last.Finish = now
+	}
+
+	server.jobs = append(server.jobs, Job{
+		Activity: activity,
+		Start:    time.Now(),
+	})
+}
+
+func (server *Server) clonejobs() []Job {
+	server.mu.Lock()
+	defer server.mu.Unlock()
+
+	return append([]Job{}, server.jobs...)
+}
+
+func (server *Server) currentActivity() string {
+	server.mu.Lock()
+	defer server.mu.Unlock()
+
+	if len(server.jobs) == 0 {
+		return ""
+	}
+	return server.jobs[len(server.jobs)-1].Activity
 }
 
 func NewServer(templates Templates, db *db.DB) *Server {
 	server := &Server{}
 	server.Templates = templates
 	server.DB = db
-	server.currentActivity = "Welding"
 	return server
 }
 
@@ -60,9 +99,7 @@ func (server *Server) handleSelectActivity(w http.ResponseWriter, r *http.Reques
 
 	nextActivity := r.Form.Get("select-activity")
 	if nextActivity != "" {
-		server.mu.Lock()
-		server.currentActivity = nextActivity
-		server.mu.Unlock()
+		server.selectActivity(nextActivity)
 	} else {
 		// TODO: invalid activity
 	}
@@ -105,17 +142,15 @@ func (server *Server) ServeSelectActivity(w http.ResponseWriter, r *http.Request
 
 		CurrentActivity string
 		Activities      []string
+		Jobs            []Job
 	}
-
-	server.mu.Lock()
-	currentActivity := server.currentActivity
-	server.mu.Unlock()
 
 	server.Templates.Present(w, r, "tracking/select-activity.html", &Data{
 		PostError:    postError.Value,
 		RequestToken: requestToken,
 
-		CurrentActivity: currentActivity,
+		CurrentActivity: server.currentActivity(),
 		Activities:      []string{"Plumbing", "Welding", "Construction"},
+		Jobs:            server.clonejobs(),
 	})
 }

@@ -14,8 +14,14 @@
 		{{end}}
 		<div class="clear"></div>
 	</div>
-
 </form>
+
+<div>
+	<label>Jobs</label><br>
+	{{ range $job := $data.Jobs }}
+	<div>{{$job.Activity}}: [{{$job.Start}}, {{$job.Finish}}]</div>
+	{{end}}
+</div>
 {{end}}
 
 {{template "footer" . }}
