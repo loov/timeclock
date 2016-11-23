@@ -5,7 +5,6 @@ import (
 	"encoding/hex"
 	"log"
 	"net/http"
-	"sync"
 	"time"
 
 	"github.com/loov/timeclock/db"
@@ -30,112 +29,14 @@ type Server struct {
 	Templates Templates
 	DB        *db.DB
 
-	mu   sync.Mutex
-	jobs []Job
-	days []Day
-}
-
-type Job struct {
-	Activity string
-	Start    time.Time
-	Finish   time.Time
-}
-
-func (job *Job) Duration() time.Duration {
-	if job.Finish.IsZero() {
-		return time.Now().Sub(job.Start)
-	}
-	return job.Finish.Sub(job.Start)
-}
-
-type Day struct {
-	Submitted  time.Time
-	Activities map[string]time.Duration
-}
-
-func (server *Server) selectActivity(activity string) {
-	server.mu.Lock()
-	defer server.mu.Unlock()
-
-	now := time.Now()
-	if len(server.jobs) > 0 {
-		last := &server.jobs[len(server.jobs)-1]
-		if last.Finish.IsZero() {
-			last.Finish = now
-		}
-	}
-
-	if activity != "" {
-		server.jobs = append(server.jobs, Job{
-			Activity: activity,
-			Start:    time.Now(),
-		})
-	}
-}
-
-func (server *Server) submitDay() {
-	server.mu.Lock()
-	defer server.mu.Unlock()
-
-	durations := map[string]time.Duration{}
-	for _, job := range server.jobs {
-		durations[job.Activity] += job.Duration()
-	}
-
-	day := Day{
-		Submitted:  time.Now(),
-		Activities: durations,
-	}
-
-	server.days = append(server.days, day)
-	server.jobs = nil
-}
-
-func (server *Server) clonejobs() []Job {
-	server.mu.Lock()
-	defer server.mu.Unlock()
-
-	return append([]Job{}, server.jobs...)
-}
-
-func (server *Server) clonedays() []Day {
-	server.mu.Lock()
-	defer server.mu.Unlock()
-
-	return append([]Day{}, server.days...)
-}
-
-func (server *Server) summarizejobs() map[string]time.Duration {
-	server.mu.Lock()
-	defer server.mu.Unlock()
-
-	durations := map[string]time.Duration{}
-	for _, job := range server.jobs {
-		durations[job.Activity] += job.Duration()
-	}
-	return durations
-}
-
-func (server *Server) currentActivity() string {
-	server.mu.Lock()
-	defer server.mu.Unlock()
-
-	if len(server.jobs) == 0 {
-		return ""
-	}
-
-	last := &server.jobs[len(server.jobs)-1]
-	if last.Finish.IsZero() {
-		return last.Activity
-	}
-
-	return ""
+	model *Model
 }
 
 func NewServer(templates Templates, db *db.DB) *Server {
 	server := &Server{}
 	server.Templates = templates
 	server.DB = db
+	server.model = &Model{}
 	return server
 }
 
@@ -158,7 +59,7 @@ func (server *Server) handleSelectActivity(w http.ResponseWriter, r *http.Reques
 
 	nextActivity := r.Form.Get("select-activity")
 	// TODO: validate next activity value
-	server.selectActivity(nextActivity)
+	server.model.SelectActivity(nextActivity)
 
 	return nil
 }
@@ -175,7 +76,7 @@ func (server *Server) ServeSelectActivity(w http.ResponseWriter, r *http.Request
 			})
 		}
 
-		if server.currentActivity() == "" {
+		if server.model.CurrentActivity() == "" {
 			http.Redirect(w, r, r.RequestURI+"/submit", http.StatusSeeOther)
 		} else {
 			http.Redirect(w, r, r.RequestURI, http.StatusSeeOther)
@@ -213,7 +114,7 @@ func (server *Server) ServeSelectActivity(w http.ResponseWriter, r *http.Request
 		PostError:    postError.Value,
 		RequestToken: requestToken,
 
-		CurrentActivity: server.currentActivity(),
+		CurrentActivity: server.model.CurrentActivity(),
 		Activities:      []string{"Plumbing", "Welding", "Construction"},
 	})
 }
@@ -235,7 +136,7 @@ func (server *Server) handleSubmitDay(w http.ResponseWriter, r *http.Request) er
 		return nil
 	}
 
-	server.submitDay()
+	server.model.SubmitDay()
 
 	return nil
 }
@@ -282,8 +183,8 @@ func (server *Server) ServeSubmitDay(w http.ResponseWriter, r *http.Request) {
 		PostError:    postError.Value,
 		RequestToken: requestToken,
 
-		Jobs:       server.clonejobs(),
-		JobSummary: server.summarizejobs(),
+		Jobs:       server.model.Jobs(),
+		JobSummary: server.model.Summary(),
 	})
 }
 
@@ -293,6 +194,6 @@ func (server *Server) ServeHistory(w http.ResponseWriter, r *http.Request) {
 	}
 
 	server.Templates.Present(w, r, "work/history.html", &Data{
-		Days: server.clonedays(),
+		Days: server.model.Days(),
 	})
 }
