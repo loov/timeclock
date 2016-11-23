@@ -6,9 +6,10 @@ import (
 )
 
 type Model struct {
-	mu   sync.Mutex
-	jobs []Job
-	days []Day
+	mu         sync.Mutex
+	activities []string
+	jobs       []Job
+	days       []Day
 }
 
 type Job struct {
@@ -27,6 +28,26 @@ func (job *Job) Duration() time.Duration {
 type Day struct {
 	Submitted  time.Time
 	Activities map[string]time.Duration
+}
+
+func (model *Model) Activities() []string {
+	model.mu.Lock()
+	defer model.mu.Unlock()
+	return append([]string{}, model.activities...)
+}
+
+func (model *Model) Jobs() []Job {
+	model.mu.Lock()
+	defer model.mu.Unlock()
+
+	return append([]Job{}, model.jobs...)
+}
+
+func (model *Model) Days() []Day {
+	model.mu.Lock()
+	defer model.mu.Unlock()
+
+	return append([]Day{}, model.days...)
 }
 
 func (model *Model) SelectActivity(activity string) {
@@ -65,20 +86,6 @@ func (model *Model) SubmitDay() {
 
 	model.days = append(model.days, day)
 	model.jobs = nil
-}
-
-func (model *Model) Jobs() []Job {
-	model.mu.Lock()
-	defer model.mu.Unlock()
-
-	return append([]Job{}, model.jobs...)
-}
-
-func (model *Model) Days() []Day {
-	model.mu.Lock()
-	defer model.mu.Unlock()
-
-	return append([]Day{}, model.days...)
 }
 
 func (model *Model) Summary() map[string]time.Duration {

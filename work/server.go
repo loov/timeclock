@@ -37,6 +37,7 @@ func NewServer(templates Templates, db *db.DB) *Server {
 	server.Templates = templates
 	server.DB = db
 	server.model = &Model{}
+	server.model.activities = []string{"Plumbing", "Welding", "Construction"}
 	return server
 }
 
@@ -115,7 +116,7 @@ func (server *Server) ServeSelectActivity(w http.ResponseWriter, r *http.Request
 		RequestToken: requestToken,
 
 		CurrentActivity: server.model.CurrentActivity(),
-		Activities:      []string{"Plumbing", "Welding", "Construction"},
+		Activities:      server.model.Activities(),
 	})
 }
 
