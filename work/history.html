@@ -1,0 +1,20 @@
+{{template "head" . }}
+{{with $data := . }}
+
+<div>
+	{{ range $day := $data.Days }}
+	<label><b>{{$day.Submitted}}</b></label><br>
+	<table>
+		{{ range $activity, $duration := $day.Activities }}
+		<tr>
+			<td>{{$activity}}</td>
+			<td>{{$duration}}</td>
+		</tr>
+		{{end}}
+	</table>
+	{{end}}
+</div>
+
+
+{{end}}
+{{template "footer" . }}

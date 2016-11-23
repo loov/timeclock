@@ -42,6 +42,7 @@ func main() {
 
 	http.HandleFunc("/work", Work.ServeSelectActivity)
 	http.HandleFunc("/work/submit", Work.ServeSubmitDay)
+	http.HandleFunc("/work/history", Work.ServeHistory)
 
 	/*
 		templates := Templates{}

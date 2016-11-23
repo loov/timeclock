@@ -32,6 +32,7 @@ type Server struct {
 
 	mu   sync.Mutex
 	jobs []Job
+	days []Day
 }
 
 type Job struct {
@@ -45,6 +46,11 @@ func (job *Job) Duration() time.Duration {
 		return time.Now().Sub(job.Start)
 	}
 	return job.Finish.Sub(job.Start)
+}
+
+type Day struct {
+	Submitted  time.Time
+	Activities map[string]time.Duration
 }
 
 func (server *Server) selectActivity(activity string) {
@@ -67,11 +73,36 @@ func (server *Server) selectActivity(activity string) {
 	}
 }
 
+func (server *Server) submitDay() {
+	server.mu.Lock()
+	defer server.mu.Unlock()
+
+	durations := map[string]time.Duration{}
+	for _, job := range server.jobs {
+		durations[job.Activity] += job.Duration()
+	}
+
+	day := Day{
+		Submitted:  time.Now(),
+		Activities: durations,
+	}
+
+	server.days = append(server.days, day)
+	server.jobs = nil
+}
+
 func (server *Server) clonejobs() []Job {
 	server.mu.Lock()
 	defer server.mu.Unlock()
 
 	return append([]Job{}, server.jobs...)
+}
+
+func (server *Server) clonedays() []Day {
+	server.mu.Lock()
+	defer server.mu.Unlock()
+
+	return append([]Day{}, server.days...)
 }
 
 func (server *Server) summarizejobs() map[string]time.Duration {
@@ -183,9 +214,40 @@ func (server *Server) ServeSelectActivity(w http.ResponseWriter, r *http.Request
 	})
 }
 
+func (server *Server) handleSubmitDay(w http.ResponseWriter, r *http.Request) error {
+	if err := r.ParseForm(); err != nil {
+		return err
+	}
+
+	tokenCookie, err := r.Cookie("request-token")
+	if err != nil {
+		// in case no-cookie, assume it's empty
+		tokenCookie = &http.Cookie{}
+	}
+
+	tokenForm := r.Form.Get("request-token")
+	if tokenForm != tokenCookie.Value && tokenCookie.Value != "" {
+		// don't handle refresh
+		return nil
+	}
+
+	server.submitDay()
+
+	return nil
+}
+
 func (server *Server) ServeSubmitDay(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodPost {
-		//
+		err := server.handleSubmitDay(w, r)
+		if err != nil {
+			http.SetCookie(w, &http.Cookie{
+				Path:   "/",
+				Name:   "post-error",
+				Value:  err.Error(),
+				MaxAge: 0,
+			})
+		}
+
 		http.Redirect(w, r, r.RequestURI, http.StatusSeeOther)
 		return
 	}
@@ -218,5 +280,15 @@ func (server *Server) ServeSubmitDay(w http.ResponseWriter, r *http.Request) {
 
 		Jobs:       server.clonejobs(),
 		JobSummary: server.summarizejobs(),
+	})
+}
+
+func (server *Server) ServeHistory(w http.ResponseWriter, r *http.Request) {
+	type Data struct {
+		Days []Day
+	}
+
+	server.Templates.Present(w, r, "work/history.html", &Data{
+		Days: server.clonedays(),
 	})
 }
