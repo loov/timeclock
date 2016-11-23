@@ -1,4 +1,4 @@
-package tracking
+package work
 
 import (
 	"crypto/rand"
@@ -174,7 +174,7 @@ func (server *Server) ServeSelectActivity(w http.ResponseWriter, r *http.Request
 		JobSummary map[string]time.Duration
 	}
 
-	server.Templates.Present(w, r, "tracking/select-activity.html", &Data{
+	server.Templates.Present(w, r, "work/select-activity.html", &Data{
 		PostError:    postError.Value,
 		RequestToken: requestToken,
 
@@ -183,7 +183,7 @@ func (server *Server) ServeSelectActivity(w http.ResponseWriter, r *http.Request
 	})
 }
 
-func (server *Server) ServeSubmitActivity(w http.ResponseWriter, r *http.Request) {
+func (server *Server) ServeSubmitDay(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodPost {
 		//
 		http.Redirect(w, r, r.RequestURI, http.StatusSeeOther)
@@ -212,7 +212,7 @@ func (server *Server) ServeSubmitActivity(w http.ResponseWriter, r *http.Request
 		JobSummary map[string]time.Duration
 	}
 
-	server.Templates.Present(w, r, "tracking/submit-activity.html", &Data{
+	server.Templates.Present(w, r, "work/submit-day.html", &Data{
 		PostError:    postError.Value,
 		RequestToken: requestToken,
 

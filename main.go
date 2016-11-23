@@ -13,7 +13,7 @@ import (
 	"strings"
 
 	"github.com/loov/timeclock/db"
-	"github.com/loov/timeclock/tracking"
+	"github.com/loov/timeclock/work"
 )
 
 var (
@@ -35,13 +35,13 @@ func main() {
 
 	templates := Templates{}
 
-	Tracking := tracking.NewServer(templates, DB)
+	Work := work.NewServer(templates, DB)
 
 	assets := http.FileServer(http.Dir("assets"))
 	http.Handle("/assets/", http.StripPrefix("/assets/", assets))
 
-	http.HandleFunc("/tracking", Tracking.ServeSelectActivity)
-	http.HandleFunc("/tracking/submit", Tracking.ServeSubmitActivity)
+	http.HandleFunc("/work", Work.ServeSelectActivity)
+	http.HandleFunc("/work/submit", Work.ServeSubmitDay)
 
 	/*
 		templates := Templates{}
