@@ -108,7 +108,14 @@ func (templates Templates) InternalError(w http.ResponseWriter, r *http.Request,
 
 func (templates Templates) Present(w http.ResponseWriter, r *http.Request, name string, data interface{}) {
 	w.Header().Set("Content-Type", "text/html")
-	t, err := template.ParseFiles(name, "common.html")
+
+	funcs := template.FuncMap{
+		"RequestPath": func() string {
+			return r.URL.Path
+		},
+	}
+
+	t, err := template.New("").Funcs(funcs).ParseFiles("common.html", name)
 	if err != nil {
 		log.Printf("error parsing template: %v", err)
 		templates.InternalError(w, r, err)
@@ -125,7 +132,7 @@ func (templates Templates) Present(w http.ResponseWriter, r *http.Request, name 
 		}
 	}
 
-	err = t.Execute(dest, data)
+	err = t.ExecuteTemplate(dest, filepath.Base(name), data)
 	if err != nil {
 		log.Printf("error executing template: %v", err)
 	}

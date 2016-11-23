@@ -2,9 +2,9 @@
 <div id="header">
 	<div class="container">
 		<div class="row menu">
-			<div class="menu-item active"><a href="/work">Work</a></div>
-			<div class="menu-item"><a href="/work/submit">Submit</a></div>
-			<div class="menu-item"><a href="/work/history">History</a></div>
+			<div class="menu-item{{if eq RequestPath "/work" }} active{{end}}"><a href="/work">Work</a></div>
+			<div class="menu-item{{if eq RequestPath "/work/submit" }} active{{end}}"><a href="/work/submit">Submit</a></div>
+			<div class="menu-item{{if eq RequestPath "/work/history" }} active{{end}}"><a href="/work/history">History</a></div>
 		</div>
 	</div>
 </div>
