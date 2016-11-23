@@ -137,6 +137,7 @@ func (server *Server) ServeSelectActivity(w http.ResponseWriter, r *http.Request
 		err := server.handleSelectActivity(w, r)
 		if err != nil {
 			http.SetCookie(w, &http.Cookie{
+				Path:   "/",
 				Name:   "post-error",
 				Value:  err.Error(),
 				MaxAge: 0,
@@ -156,6 +157,7 @@ func (server *Server) ServeSelectActivity(w http.ResponseWriter, r *http.Request
 
 	requestToken := createToken()
 	http.SetCookie(w, &http.Cookie{
+		Path:   "/",
 		Name:   "request-token",
 		Value:  requestToken,
 		MaxAge: 0,
@@ -178,7 +180,43 @@ func (server *Server) ServeSelectActivity(w http.ResponseWriter, r *http.Request
 
 		CurrentActivity: server.currentActivity(),
 		Activities:      []string{"Plumbing", "Welding", "Construction"},
-		Jobs:            server.clonejobs(),
-		JobSummary:      server.summarizejobs(),
+	})
+}
+
+func (server *Server) ServeSubmitActivity(w http.ResponseWriter, r *http.Request) {
+	if r.Method == http.MethodPost {
+		//
+		http.Redirect(w, r, r.RequestURI, http.StatusSeeOther)
+		return
+	}
+
+	postError, err := r.Cookie("post-error")
+	if err != nil {
+		postError = &http.Cookie{}
+	}
+	http.SetCookie(w, &http.Cookie{Name: "post-error", MaxAge: -1})
+
+	requestToken := createToken()
+	http.SetCookie(w, &http.Cookie{
+		Path:   "/",
+		Name:   "request-token",
+		Value:  requestToken,
+		MaxAge: 0,
+	})
+
+	type Data struct {
+		PostError    string
+		RequestToken string
+
+		Jobs       []Job
+		JobSummary map[string]time.Duration
+	}
+
+	server.Templates.Present(w, r, "tracking/submit-activity.html", &Data{
+		PostError:    postError.Value,
+		RequestToken: requestToken,
+
+		Jobs:       server.clonejobs(),
+		JobSummary: server.summarizejobs(),
 	})
 }

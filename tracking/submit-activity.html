@@ -1,0 +1,42 @@
+{{template "head" . }}
+{{with $data := . }}
+
+<form method="post">
+	{{ if $data.PostError }}
+	<div class="error">{{$data.PostError}}</div>
+	{{ end }}
+	<input type="hidden" name="request-token" value="{{$data.RequestToken}}"/>
+
+
+	<div>
+		<label><b>Summary</b></label><br>
+		<table>
+			{{ range $activity, $duration := $data.JobSummary }}
+			<tr>
+				<td>{{$activity}}</td>
+				<td>{{$duration}}</td>
+			</tr>
+			{{end}}
+		</table>
+	</div>
+
+	<button type="submit" name="submit-activity" value="">Submit</button>
+</form>
+
+<div>
+	<label><b>Log</b></label><br>
+	<table>
+		{{ range $job := $data.Jobs }}
+		<tr>
+			<td>{{$job.Activity}}</td>
+			<td>{{$job.Start.Format "2006-01-02T15:04:05Z07:00"}}</td>
+			<td>{{$job.Finish.Format "2006-01-02T15:04:05Z07:00"}}</td>
+		</tr>
+		{{end}}
+	</table>
+</div>
+
+
+{{end}}
+
+{{template "footer" . }}

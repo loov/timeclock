@@ -40,7 +40,8 @@ func main() {
 	assets := http.FileServer(http.Dir("assets"))
 	http.Handle("/assets/", http.StripPrefix("/assets/", assets))
 
-	http.HandleFunc("/", Tracking.ServeSelectActivity)
+	http.HandleFunc("/tracking", Tracking.ServeSelectActivity)
+	http.HandleFunc("/tracking/submit", Tracking.ServeSubmitActivity)
 
 	/*
 		templates := Templates{}
