@@ -42,3 +42,34 @@ input[type="button"].button-active {
 	padding: 1em 1em;
 	border: 1px solid #fcc;
 }
+
+
+/* .actions-fit describes list of elements dynamically sized */
+
+.actions-fit {
+	display: flex;
+	flex-wrap: wrap;
+}
+
+.actions-fit > .button,
+.actions-fit > button,
+.actions-fit > input[type="submit"],
+.actions-fit > input[type="reset"],
+.actions-fit > input[type="button"]  {
+	flex: 1;
+}
+
+@media (max-width: 400px) {
+	.actions-fit {
+		display: block;
+	}
+
+	.actions-fit > .button,
+	.actions-fit > button,
+	.actions-fit > input[type="submit"],
+	.actions-fit > input[type="reset"],
+	.actions-fit > input[type="button"]  {
+		display: block;
+		width: 100%;
+	}
+}
