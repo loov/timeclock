@@ -175,7 +175,11 @@ func (server *Server) ServeSelectActivity(w http.ResponseWriter, r *http.Request
 			})
 		}
 
-		http.Redirect(w, r, r.RequestURI, http.StatusSeeOther)
+		if server.currentActivity() == "" {
+			http.Redirect(w, r, r.RequestURI+"/submit", http.StatusSeeOther)
+		} else {
+			http.Redirect(w, r, r.RequestURI, http.StatusSeeOther)
+		}
 		return
 	}
 
@@ -248,7 +252,7 @@ func (server *Server) ServeSubmitDay(w http.ResponseWriter, r *http.Request) {
 			})
 		}
 
-		http.Redirect(w, r, r.RequestURI, http.StatusSeeOther)
+		http.Redirect(w, r, r.RequestURI+"/../history", http.StatusSeeOther)
 		return
 	}
 
