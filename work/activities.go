@@ -23,8 +23,11 @@ type Activities interface {
 
 	// Pending returns the list of activities that have not been marked as reported
 	Pending() ([]Activity, error)
-	// MarkSubmitted marks the activities as submitted
-	MarkSubmitted(activityIDs []ActivityID) error
+
+	// Report marks the summary as submitted
+	Report(summary *Summary) error
+	// Reports returns the list of submitted reports
+	Reports() ([]*Summary, error)
 }
 
 type ActivityID uint64

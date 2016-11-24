@@ -14,7 +14,7 @@ type Project struct {
 	pending   []Activity
 	submitted []Activity
 
-	days []*Summary
+	reports []*Summary
 }
 
 func NewProject() *Project {
@@ -23,11 +23,11 @@ func NewProject() *Project {
 	return project
 }
 
-func (project *Project) DefaultNames() []string {
+func (project *Project) DefaultNames() ([]string, error) {
 	project.mu.Lock()
 	defer project.mu.Unlock()
 
-	return append([]string{}, project.defaultNames...)
+	return append([]string{}, project.defaultNames...), nil
 }
 
 func (project *Project) Current() (Activity, error) {
@@ -45,8 +45,8 @@ func (project *Project) Current() (Activity, error) {
 }
 
 func (project *Project) _finishLast(now time.Time) {
-	if len(project.jobs) > 0 {
-		last := &project.jobs[len(project.jobs)-1]
+	if len(project.pending) > 0 {
+		last := &project.pending[len(project.pending)-1]
 		if last.Finish.IsZero() {
 			last.Finish = now
 		}
@@ -87,14 +87,14 @@ func (project *Project) Pending() ([]Activity, error) {
 	return append([]Activity{}, project.pending...), nil
 }
 
-func (project *Project) MarkSubmitted(activityIDs []ActivityID) error {
+func (project *Project) Report(summary *Summary) error {
 	project.mu.Lock()
 	defer project.mu.Unlock()
 
 	//TODO: check duplicate submissions
 
 	markSubmitted := map[ActivityID]struct{}{}
-	for _, id := range activityIDs {
+	for _, id := range summary.Activities {
 		markSubmitted[id] = struct{}{}
 	}
 
@@ -108,12 +108,14 @@ func (project *Project) MarkSubmitted(activityIDs []ActivityID) error {
 		}
 	}
 
+	project.reports = append(project.reports, summary)
+
 	return nil
 }
 
-func (project *Project) Days() []*Summary {
+func (project *Project) Reports() ([]*Summary, error) {
 	project.mu.Lock()
 	defer project.mu.Unlock()
 
-	return append([]*Summary{}, project.days...)
+	return append([]*Summary{}, project.reports...), nil
 }

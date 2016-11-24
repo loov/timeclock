@@ -5,7 +5,6 @@ import (
 	"encoding/hex"
 	"log"
 	"net/http"
-	"time"
 )
 
 func createToken() string {
@@ -24,14 +23,14 @@ type Templates interface {
 }
 
 type Server struct {
-	Templates Templates
-	project   *Project
+	Templates  Templates
+	activities Activities
 }
 
 func NewServer(templates Templates) *Server {
 	server := &Server{}
 	server.Templates = templates
-	server.project = NewProject()
+	server.activities = NewProject()
 	return server
 }
 
@@ -53,8 +52,11 @@ func (server *Server) handleSelectActivity(w http.ResponseWriter, r *http.Reques
 	}
 
 	nextActivity := r.Form.Get("select-activity")
-	// TODO: validate next activity value
-	server.project.SelectActivity(nextActivity)
+	if nextActivity != "" {
+		return server.activities.Start(nextActivity)
+	} else {
+		return server.activities.Finish()
+	}
 
 	return nil
 }
@@ -71,7 +73,7 @@ func (server *Server) ServeSelectActivity(w http.ResponseWriter, r *http.Request
 			})
 		}
 
-		if server.project.CurrentActivity() == "" {
+		if r.Form.Get("select-activity") == "" {
 			http.Redirect(w, r, r.RequestURI+"/submit", http.StatusSeeOther)
 		} else {
 			http.Redirect(w, r, r.RequestURI, http.StatusSeeOther)
@@ -94,23 +96,22 @@ func (server *Server) ServeSelectActivity(w http.ResponseWriter, r *http.Request
 		MaxAge: 0,
 	})
 
-	type Data struct {
-		PostError    string
-		RequestToken string
-
-		CurrentActivity string
-		Activities      []string
-		Jobs            []Job
-
-		JobSummary map[string]time.Duration
+	activityNames, err := server.activities.DefaultNames()
+	if err != nil {
+		log.Println(err)
 	}
 
-	server.Templates.Present(w, r, "work/select-activity.html", &Data{
-		PostError:    postError.Value,
-		RequestToken: requestToken,
+	activity, err := server.activities.Current()
+	if err != nil {
+		log.Println(err)
+	}
 
-		CurrentActivity: server.project.CurrentActivity(),
-		Activities:      server.project.Activities(),
+	server.Templates.Present(w, r, "work/select-activity.html", map[string]interface{}{
+		"PostError":    postError.Value,
+		"RequestToken": requestToken,
+
+		"CurrentActivity": activity,
+		"Activities":      activityNames,
 	})
 }
 
@@ -131,7 +132,24 @@ func (server *Server) handleSubmitDay(w http.ResponseWriter, r *http.Request) er
 		return nil
 	}
 
-	server.project.SubmitDay()
+	if err := server.activities.Finish(); err != nil {
+		return err
+	}
+
+	pending, err := server.activities.Pending()
+	if err != nil {
+		return err
+	}
+
+	summary, err := SummarizeActivities(pending)
+	if err != nil {
+		return err
+	}
+
+	err = server.activities.Report(summary)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
@@ -166,29 +184,32 @@ func (server *Server) ServeSubmitDay(w http.ResponseWriter, r *http.Request) {
 		MaxAge: 0,
 	})
 
-	type Data struct {
-		PostError    string
-		RequestToken string
-
-		Jobs       []Job
-		JobSummary map[string]time.Duration
+	pending, err := server.activities.Pending()
+	if err != nil {
+		log.Println(err)
 	}
 
-	server.Templates.Present(w, r, "work/submit-day.html", &Data{
-		PostError:    postError.Value,
-		RequestToken: requestToken,
+	summary, err := SummarizeActivities(pending)
+	if err != nil {
+		log.Println(err)
+	}
 
-		Jobs:       server.project.Jobs(),
-		JobSummary: server.project.Summary(),
+	server.Templates.Present(w, r, "work/submit-day.html", map[string]interface{}{
+		"PostError":    postError.Value,
+		"RequestToken": requestToken,
+
+		"Pending": pending,
+		"Summary": summary,
 	})
 }
 
 func (server *Server) ServeHistory(w http.ResponseWriter, r *http.Request) {
-	type Data struct {
-		Days []Day
+	reports, err := server.activities.Reports()
+	if err != nil {
+		log.Println(err)
 	}
 
-	server.Templates.Present(w, r, "work/history.html", &Data{
-		Days: server.project.Days(),
+	server.Templates.Present(w, r, "work/history.html", map[string]interface{}{
+		"Reports": reports,
 	})
 }
