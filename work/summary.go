@@ -1,9 +1,6 @@
 package work
 
-import (
-	"errors"
-	"time"
-)
+import "time"
 
 type Summary struct {
 	Start  time.Time
@@ -13,25 +10,32 @@ type Summary struct {
 	Durations  map[string]time.Duration
 }
 
+func (summary *Summary) Include(activity Activity) error {
+	if activity.Incomplete() {
+		return ErrActivityIncomplete
+	}
+
+	if summary.Start.After(activity.Start) {
+		summary.Start = activity.Start
+	}
+	if summary.Finish.Before(activity.Finish) {
+		summary.Finish = activity.Finish
+	}
+
+	summary.Activities = append(summary.Activities, activity.ID)
+	summary.Durations[activity.Name] += activity.Duration()
+
+	return nil
+}
+
 func SummarizeActivities(activities []Activity) (*Summary, error) {
 	summary := &Summary{}
 	summary.Durations = make(map[string]time.Duration)
 
 	for _, activity := range activities {
-		// don't count unfinished activities
-		if activity.Start.IsZero() || activity.Finish.IsZero() {
-			return nil, errors.New("activity is incomplete")
+		if err := summary.Include(activity); err != nil {
+			return nil, err
 		}
-
-		if summary.Start.After(activity.Start) {
-			summary.Start = activity.Start
-		}
-		if summary.Finish.Before(activity.Finish) {
-			summary.Finish = activity.Finish
-		}
-
-		summary.Activities = append(summary.Activities, activity.ID)
-		summary.Durations[activity.Name] += activity.Duration()
 	}
 
 	return summary, nil

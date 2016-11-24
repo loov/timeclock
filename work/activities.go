@@ -1,6 +1,13 @@
 package work
 
-import "time"
+import (
+	"errors"
+	"time"
+)
+
+var (
+	ErrActivityIncomplete = errors.New("activity is incomplete.")
+)
 
 type Activities interface {
 	// DefaultNames returns the default list of activities
@@ -27,6 +34,10 @@ type Activity struct {
 
 	Start  time.Time
 	Finish time.Time
+}
+
+func (activity *Activity) Incomplete() bool {
+	return activity.Start.IsZero() || activity.Finish.IsZero()
 }
 
 func (activity *Activity) Duration() time.Duration {
