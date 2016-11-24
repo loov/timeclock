@@ -31,8 +31,7 @@ type Server struct {
 func NewServer(templates Templates) *Server {
 	server := &Server{}
 	server.Templates = templates
-	server.model = &Model{}
-	server.model.activities = []string{"Plumbing", "Welding", "Construction"}
+	server.model = NewModel()
 	return server
 }
 

@@ -12,22 +12,10 @@ type Model struct {
 	days       []Day
 }
 
-type Job struct {
-	Activity string
-	Start    time.Time
-	Finish   time.Time
-}
-
-func (job *Job) Duration() time.Duration {
-	if job.Finish.IsZero() {
-		return time.Now().Sub(job.Start)
-	}
-	return job.Finish.Sub(job.Start)
-}
-
-type Day struct {
-	Submitted  time.Time
-	Activities map[string]time.Duration
+func NewModel() *Model {
+	model := &Model{}
+	model.activities = []string{"Plumbing", "Welding", "Construction"}
+	return model
 }
 
 func (model *Model) Activities() []string {
