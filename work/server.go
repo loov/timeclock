@@ -6,8 +6,6 @@ import (
 	"log"
 	"net/http"
 	"time"
-
-	"github.com/loov/timeclock/db"
 )
 
 func createToken() string {
@@ -27,15 +25,12 @@ type Templates interface {
 
 type Server struct {
 	Templates Templates
-	DB        *db.DB
-
-	model *Model
+	model     *Model
 }
 
-func NewServer(templates Templates, db *db.DB) *Server {
+func NewServer(templates Templates) *Server {
 	server := &Server{}
 	server.Templates = templates
-	server.DB = db
 	server.model = &Model{}
 	server.model.activities = []string{"Plumbing", "Welding", "Construction"}
 	return server

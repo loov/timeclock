@@ -12,7 +12,6 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/loov/timeclock/db"
 	"github.com/loov/timeclock/work"
 )
 
@@ -28,14 +27,9 @@ func main() {
 		*addr = host + ":" + port
 	}
 
-	DB, err := db.New("main.db")
-	if err != nil {
-		log.Fatal(err)
-	}
-
 	templates := Templates{}
 
-	Work := work.NewServer(templates, DB)
+	Work := work.NewServer(templates)
 
 	assets := http.FileServer(http.Dir("assets"))
 	http.Handle("/assets/", http.StripPrefix("/assets/", assets))
