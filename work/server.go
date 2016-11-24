@@ -25,13 +25,13 @@ type Templates interface {
 
 type Server struct {
 	Templates Templates
-	model     *Model
+	project   *Project
 }
 
 func NewServer(templates Templates) *Server {
 	server := &Server{}
 	server.Templates = templates
-	server.model = NewModel()
+	server.project = NewProject()
 	return server
 }
 
@@ -54,7 +54,7 @@ func (server *Server) handleSelectActivity(w http.ResponseWriter, r *http.Reques
 
 	nextActivity := r.Form.Get("select-activity")
 	// TODO: validate next activity value
-	server.model.SelectActivity(nextActivity)
+	server.project.SelectActivity(nextActivity)
 
 	return nil
 }
@@ -71,7 +71,7 @@ func (server *Server) ServeSelectActivity(w http.ResponseWriter, r *http.Request
 			})
 		}
 
-		if server.model.CurrentActivity() == "" {
+		if server.project.CurrentActivity() == "" {
 			http.Redirect(w, r, r.RequestURI+"/submit", http.StatusSeeOther)
 		} else {
 			http.Redirect(w, r, r.RequestURI, http.StatusSeeOther)
@@ -109,8 +109,8 @@ func (server *Server) ServeSelectActivity(w http.ResponseWriter, r *http.Request
 		PostError:    postError.Value,
 		RequestToken: requestToken,
 
-		CurrentActivity: server.model.CurrentActivity(),
-		Activities:      server.model.Activities(),
+		CurrentActivity: server.project.CurrentActivity(),
+		Activities:      server.project.Activities(),
 	})
 }
 
@@ -131,7 +131,7 @@ func (server *Server) handleSubmitDay(w http.ResponseWriter, r *http.Request) er
 		return nil
 	}
 
-	server.model.SubmitDay()
+	server.project.SubmitDay()
 
 	return nil
 }
@@ -178,8 +178,8 @@ func (server *Server) ServeSubmitDay(w http.ResponseWriter, r *http.Request) {
 		PostError:    postError.Value,
 		RequestToken: requestToken,
 
-		Jobs:       server.model.Jobs(),
-		JobSummary: server.model.Summary(),
+		Jobs:       server.project.Jobs(),
+		JobSummary: server.project.Summary(),
 	})
 }
 
@@ -189,6 +189,6 @@ func (server *Server) ServeHistory(w http.ResponseWriter, r *http.Request) {
 	}
 
 	server.Templates.Present(w, r, "work/history.html", &Data{
-		Days: server.model.Days(),
+		Days: server.project.Days(),
 	})
 }
