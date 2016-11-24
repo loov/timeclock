@@ -2,10 +2,10 @@
 {{with $data := . }}
 
 <div>
-	{{ range $day := $data.Days }}
-	<label><b>{{$day.Submitted}}</b></label><br>
+	{{ range $report := $data.Reports }}
+	<label><b>{{$report.Start.Format "2006-01-02"}}</b></label>
 	<table>
-		{{ range $activity, $duration := $day.Activities }}
+		{{ range $activity, $duration := $report.Durations }}
 		<tr>
 			<td>{{$activity}}</td>
 			<td>{{$duration}}</td>

@@ -106,12 +106,12 @@ func (server *Server) ServeSelectActivity(w http.ResponseWriter, r *http.Request
 		log.Println(err)
 	}
 
-	server.Templates.Present(w, r, "work/select-activity.html", map[string]interface{}{
+	server.Templates.Present(w, r, "work/work.html", map[string]interface{}{
 		"PostError":    postError.Value,
 		"RequestToken": requestToken,
 
 		"CurrentActivity": activity,
-		"Activities":      activityNames,
+		"ActivityNames":   activityNames,
 	})
 }
 
@@ -194,7 +194,7 @@ func (server *Server) ServeSubmitDay(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 	}
 
-	server.Templates.Present(w, r, "work/submit-day.html", map[string]interface{}{
+	server.Templates.Present(w, r, "work/submit-report.html", map[string]interface{}{
 		"PostError":    postError.Value,
 		"RequestToken": requestToken,
 

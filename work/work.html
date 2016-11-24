@@ -9,8 +9,8 @@
 	<input type="hidden" name="request-token" value="{{$data.RequestToken}}"/>
 
 	<div class="actions actions-fit">
-		{{range $activity := $data.Activities}}
-			<button {{if (eq $activity $data.CurrentActivity)}}class="button-active" {{end}} type="submit" name="select-activity" value="{{$activity}}">{{$activity}}</button>
+		{{range $activityName := $data.ActivityNames}}
+			<button {{if (eq $activityName $data.CurrentActivity.Name)}}class="button-active" {{end}} type="submit" name="select-activity" value="{{$activityName}}">{{$activityName}}</button>
 		{{end}}
 		<button type="submit" name="select-activity" value="">Finish</button>
 		<div class="clear"></div>

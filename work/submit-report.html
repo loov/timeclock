@@ -11,7 +11,7 @@
 	<div>
 		<label><b>Summary</b></label><br>
 		<table>
-			{{ range $activity, $duration := $data.JobSummary }}
+			{{ range $activity, $duration := $data.Summary.Durations }}
 			<tr>
 				<td>{{$activity}}</td>
 				<td>{{$duration}}</td>
@@ -26,11 +26,12 @@
 <div>
 	<label><b>Log</b></label><br>
 	<table>
-		{{ range $job := $data.Jobs }}
+		{{ range $activity := $data.Pending }}
 		<tr>
-			<td>{{$job.Activity}}</td>
-			<td>{{$job.Start.Format "2006-01-02T15:04:05Z07:00"}}</td>
-			<td>{{$job.Finish.Format "2006-01-02T15:04:05Z07:00"}}</td>
+			<td>{{$activity.Name}}</td>
+			<td>{{$activity.Duration}}</td>
+			<td>{{$activity.Start.Format "15:04:05"}}</td>
+			<td>{{$activity.Finish.Format "15:04:05"}}</td>
 		</tr>
 		{{end}}
 	</table>
