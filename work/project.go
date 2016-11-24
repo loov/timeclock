@@ -6,99 +6,114 @@ import (
 )
 
 type Project struct {
-	mu         sync.Mutex
-	activities []string
-	jobs       []Job
-	days       []Day
+	mu sync.Mutex
+
+	defaultNames []string
+
+	lastID    ActivityID
+	pending   []Activity
+	submitted []Activity
+
+	days []*Summary
 }
 
 func NewProject() *Project {
 	project := &Project{}
-	project.activities = []string{"Plumbing", "Welding", "Construction"}
+	project.defaultNames = []string{"Plumbing", "Welding", "Construction"}
 	return project
 }
 
-func (project *Project) Activities() []string {
+func (project *Project) DefaultNames() []string {
 	project.mu.Lock()
 	defer project.mu.Unlock()
-	return append([]string{}, project.activities...)
+
+	return append([]string{}, project.defaultNames...)
 }
 
-func (project *Project) Jobs() []Job {
+func (project *Project) Current() (Activity, error) {
 	project.mu.Lock()
 	defer project.mu.Unlock()
 
-	return append([]Job{}, project.jobs...)
+	if len(project.pending) > 0 {
+		last := project.pending[len(project.pending)-1]
+		if last.Incomplete() {
+			return last, nil
+		}
+	}
+
+	return Activity{}, ErrNoCurrentActivity
 }
 
-func (project *Project) Days() []Day {
-	project.mu.Lock()
-	defer project.mu.Unlock()
-
-	return append([]Day{}, project.days...)
-}
-
-func (project *Project) SelectActivity(activity string) {
-	project.mu.Lock()
-	defer project.mu.Unlock()
-
-	now := time.Now()
+func (project *Project) _finishLast(now time.Time) {
 	if len(project.jobs) > 0 {
 		last := &project.jobs[len(project.jobs)-1]
 		if last.Finish.IsZero() {
 			last.Finish = now
 		}
 	}
+}
+
+func (project *Project) Start(activity string) error {
+	project.mu.Lock()
+	defer project.mu.Unlock()
+
+	now := time.Now()
+	project._finishLast(now)
 
 	if activity != "" {
-		project.jobs = append(project.jobs, Job{
-			Activity: activity,
-			Start:    time.Now(),
+		project.lastID++
+		project.pending = append(project.pending, Activity{
+			ID:    project.lastID,
+			Name:  activity,
+			Start: now,
 		})
 	}
+
+	return nil
 }
 
-func (project *Project) SubmitDay() {
+func (project *Project) Finish() error {
 	project.mu.Lock()
 	defer project.mu.Unlock()
 
-	durations := map[string]time.Duration{}
-	for _, job := range project.jobs {
-		durations[job.Activity] += job.Duration()
-	}
-
-	day := Day{
-		Submitted:  time.Now(),
-		Activities: durations,
-	}
-
-	project.days = append(project.days, day)
-	project.jobs = nil
+	project._finishLast(time.Now())
+	return nil
 }
 
-func (project *Project) Summary() map[string]time.Duration {
+func (project *Project) Pending() ([]Activity, error) {
 	project.mu.Lock()
 	defer project.mu.Unlock()
 
-	durations := map[string]time.Duration{}
-	for _, job := range project.jobs {
-		durations[job.Activity] += job.Duration()
-	}
-	return durations
+	return append([]Activity{}, project.pending...), nil
 }
 
-func (project *Project) CurrentActivity() string {
+func (project *Project) MarkSubmitted(activityIDs []ActivityID) error {
 	project.mu.Lock()
 	defer project.mu.Unlock()
 
-	if len(project.jobs) == 0 {
-		return ""
+	//TODO: check duplicate submissions
+
+	markSubmitted := map[ActivityID]struct{}{}
+	for _, id := range activityIDs {
+		markSubmitted[id] = struct{}{}
 	}
 
-	last := &project.jobs[len(project.jobs)-1]
-	if last.Finish.IsZero() {
-		return last.Activity
+	for i := 0; i < len(project.pending); {
+		act := project.pending[i]
+		if _, ok := markSubmitted[act.ID]; ok {
+			project.submitted = append(project.submitted, act)
+			project.pending = append(project.pending[:i], project.pending[i+1:]...)
+		} else {
+			i++
+		}
 	}
 
-	return ""
+	return nil
+}
+
+func (project *Project) Days() []*Summary {
+	project.mu.Lock()
+	defer project.mu.Unlock()
+
+	return append([]*Summary{}, project.days...)
 }

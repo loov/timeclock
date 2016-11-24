@@ -7,6 +7,7 @@ import (
 
 var (
 	ErrActivityIncomplete = errors.New("activity is incomplete.")
+	ErrNoCurrentActivity  = errors.New("no current activity")
 )
 
 type Activities interface {
@@ -23,7 +24,7 @@ type Activities interface {
 	// Pending returns the list of activities that have not been marked as reported
 	Pending() ([]Activity, error)
 	// MarkSubmitted marks the activities as submitted
-	MarkSubmitted(activity []ActivityID) error
+	MarkSubmitted(activityIDs []ActivityID) error
 }
 
 type ActivityID uint64
