@@ -1,24 +1,32 @@
 package work
 
 import (
+	"math/rand"
 	"sync"
 	"time"
 )
 
+type ProjectID uint64
+
 type Project struct {
-	mu sync.Mutex
+	ID   ProjectID
+	Name string
 
+	ShortDescription string
+
+	mu           sync.Mutex
 	defaultNames []string
-
-	lastID    ActivityID
-	pending   []Activity
-	submitted []Activity
-
-	reports []*Summary
+	lastID       ActivityID
+	pending      []Activity
+	submitted    []Activity
+	reports      []*Summary
 }
 
-func NewProject() *Project {
+func NewProject(name, desc string) *Project {
 	project := &Project{}
+	project.ID = ProjectID(rand.Int())
+	project.Name = name
+	project.ShortDescription = desc
 	project.defaultNames = []string{"Plumbing", "Welding", "Construction"}
 	return project
 }

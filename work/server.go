@@ -30,7 +30,7 @@ type Server struct {
 func NewServer(templates Templates) *Server {
 	server := &Server{}
 	server.Templates = templates
-	server.activities = NewProject()
+	server.activities = NewProject("1231", "Railing")
 	return server
 }
 

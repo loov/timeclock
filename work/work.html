@@ -8,6 +8,7 @@
 
 	<input type="hidden" name="request-token" value="{{$data.RequestToken}}"/>
 
+	<label for="">Activity</label>
 	<div class="actions actions-fit">
 		{{range $activityName := $data.ActivityNames}}
 			<button {{if (eq $activityName $data.CurrentActivity.Name)}}class="button-active" {{end}} type="submit" name="select-activity" value="{{$activityName}}">{{$activityName}}</button>
@@ -15,6 +16,15 @@
 		<button type="submit" name="select-activity" value="">Finish</button>
 		<div class="clear"></div>
 	</div>
+
+	<label for="">Project</label>
+	<div class="actions actions-fit">
+		{{range $project := $data.Projects}}
+			<button {{if (eq $project.ID $data.CurrentActivity.PID)}}class="button-active" {{end}} type="submit" name="select-activity" value="{{$project.ID}}">{{$project.Name}}: {{$project.ShortDescription}}</button>
+		{{end}}
+		<div class="clear"></div>
+	</div>
+
 </form>
 {{end}}
 
