@@ -96,7 +96,7 @@ func (server *Server) ServeSelectActivity(w http.ResponseWriter, r *http.Request
 		MaxAge: 0,
 	})
 
-	activityNames, err := server.activities.DefaultNames()
+	activityNames, err := server.activities.Names()
 	if err != nil {
 		log.Println(err)
 	}

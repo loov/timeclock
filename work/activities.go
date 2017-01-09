@@ -1,9 +1,6 @@
 package work
 
-import (
-	"errors"
-	"time"
-)
+import "errors"
 
 var (
 	ErrActivityIncomplete = errors.New("activity is incomplete.")
@@ -11,8 +8,8 @@ var (
 )
 
 type Activities interface {
-	// DefaultNames returns the default list of activities
-	DefaultNames() ([]string, error)
+	// Names returns list of available activities
+	Names() ([]string, error)
 
 	// Current returns the current activity
 	Current() (Activity, error)
@@ -28,25 +25,4 @@ type Activities interface {
 	Report(summary *Summary) error
 	// Reports returns the list of submitted reports
 	Reports() ([]*Summary, error)
-}
-
-type ActivityID uint64
-
-type Activity struct {
-	ID   ActivityID
-	Name string
-
-	Start  time.Time
-	Finish time.Time
-}
-
-func (activity *Activity) Incomplete() bool {
-	return activity.Start.IsZero() || activity.Finish.IsZero()
-}
-
-func (activity *Activity) Duration() time.Duration {
-	if activity.Finish.IsZero() {
-		return time.Now().Sub(activity.Start)
-	}
-	return activity.Finish.Sub(activity.Start)
 }

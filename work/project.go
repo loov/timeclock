@@ -31,7 +31,7 @@ func NewProject(name, desc string) *Project {
 	return project
 }
 
-func (project *Project) DefaultNames() ([]string, error) {
+func (project *Project) Names() ([]string, error) {
 	project.mu.Lock()
 	defer project.mu.Unlock()
 

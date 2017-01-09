@@ -1,8 +1,19 @@
 package work
 
-import "time"
+import (
+	"time"
+
+	"github.com/loov/timeclock/project"
+	"github.com/loov/timeclock/user"
+)
+
+type SummaryID uint64
 
 type Summary struct {
+	ID      SummaryID
+	Worker  user.ID
+	Project project.ID
+
 	Start  time.Time
 	Finish time.Time
 
