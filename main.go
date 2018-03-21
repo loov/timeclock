@@ -34,9 +34,8 @@ func main() {
 	assets := http.FileServer(http.Dir("assets"))
 	http.Handle("/assets/", http.StripPrefix("/assets/", assets))
 
-	http.HandleFunc("/work", Work.ServeSelectActivity)
-	http.HandleFunc("/work/submit", Work.ServeSubmitDay)
-	http.HandleFunc("/work/history", Work.ServeHistory)
+	http.HandleFunc("/work", Work.ServeOverview)
+	// http.HandleFunc("/work/submit", Work.ServeSubmitDay)
 
 	/*
 		templates := Templates{}
@@ -49,8 +48,6 @@ func main() {
 		Project := project.NewServer(templates, DB.Projects())
 		Tracking := tracking.NewServer(templates, DB.Tracker(), DB.Activities(), DB.Projects())
 		DayReport := dayreport.NewServer(templates, DB.Activities(), DB.DayReports())
-
-
 
 		http.HandleFunc("/track/project", Tracking.ServeSelectProject)
 		http.HandleFunc("/track/active", Tracking.ServeActiveProject)

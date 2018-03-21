@@ -23,64 +23,18 @@ type Templates interface {
 }
 
 type Server struct {
-	Templates  Templates
-	activities Activities
+	Templates Templates
+	Database  *Database
 }
 
 func NewServer(templates Templates) *Server {
 	server := &Server{}
 	server.Templates = templates
-	server.activities = NewProject("1231", "Railing")
+	server.Database = NewDatabase()
 	return server
 }
 
-func (server *Server) handleSelectActivity(w http.ResponseWriter, r *http.Request) error {
-	if err := r.ParseForm(); err != nil {
-		return err
-	}
-
-	tokenCookie, err := r.Cookie("request-token")
-	if err != nil {
-		// in case no-cookie, assume it's empty
-		tokenCookie = &http.Cookie{}
-	}
-
-	tokenForm := r.Form.Get("request-token")
-	if tokenForm != tokenCookie.Value && tokenCookie.Value != "" {
-		// don't handle refresh
-		return nil
-	}
-
-	nextActivity := r.Form.Get("select-activity")
-	if nextActivity != "" {
-		return server.activities.Start(nextActivity)
-	} else {
-		return server.activities.Finish()
-	}
-
-	return nil
-}
-
-func (server *Server) ServeSelectActivity(w http.ResponseWriter, r *http.Request) {
-	if r.Method == http.MethodPost {
-		err := server.handleSelectActivity(w, r)
-		if err != nil {
-			http.SetCookie(w, &http.Cookie{
-				Path:   "/",
-				Name:   "post-error",
-				Value:  err.Error(),
-				MaxAge: 0,
-			})
-		}
-
-		if r.Form.Get("select-activity") == "" {
-			http.Redirect(w, r, r.RequestURI+"/submit", http.StatusSeeOther)
-		} else {
-			http.Redirect(w, r, r.RequestURI, http.StatusSeeOther)
-		}
-		return
-	}
-
+func (server *Server) ServeOverview(w http.ResponseWriter, r *http.Request) {
 	postError, err := r.Cookie("post-error")
 	if err != nil {
 		postError = &http.Cookie{}
@@ -96,12 +50,7 @@ func (server *Server) ServeSelectActivity(w http.ResponseWriter, r *http.Request
 		MaxAge: 0,
 	})
 
-	activityNames, err := server.activities.Names()
-	if err != nil {
-		log.Println(err)
-	}
-
-	activity, err := server.activities.Current()
+	DefaultActivities, err := server.Database.DefaultActivities()
 	if err != nil {
 		log.Println(err)
 	}
@@ -110,11 +59,11 @@ func (server *Server) ServeSelectActivity(w http.ResponseWriter, r *http.Request
 		"PostError":    postError.Value,
 		"RequestToken": requestToken,
 
-		"CurrentActivity": activity,
-		"ActivityNames":   activityNames,
+		"DefaultActivities": DefaultActivities,
 	})
 }
 
+/*
 func (server *Server) handleSubmitDay(w http.ResponseWriter, r *http.Request) error {
 	if err := r.ParseForm(); err != nil {
 		return err
@@ -166,7 +115,7 @@ func (server *Server) ServeSubmitDay(w http.ResponseWriter, r *http.Request) {
 			})
 		}
 
-		http.Redirect(w, r, r.RequestURI+"/../history", http.StatusSeeOther)
+		http.Redirect(w, r, r.RequestURI+"/..", http.StatusSeeOther)
 		return
 	}
 
@@ -202,14 +151,4 @@ func (server *Server) ServeSubmitDay(w http.ResponseWriter, r *http.Request) {
 		"Summary": summary,
 	})
 }
-
-func (server *Server) ServeHistory(w http.ResponseWriter, r *http.Request) {
-	reports, err := server.activities.Reports()
-	if err != nil {
-		log.Println(err)
-	}
-
-	server.Templates.Present(w, r, "work/history.html", map[string]interface{}{
-		"Reports": reports,
-	})
-}
+*/
