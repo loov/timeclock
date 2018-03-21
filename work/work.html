@@ -1,31 +1,59 @@
 {{template "head" . }}
 {{with $data := . }}
 
-<form method="post">
-	{{ if $data.PostError }}
-	<div class="error">{{$data.PostError}}</div>
-	{{ end }}
+<label for="">Unsubmitted Work</label>
+<div>
+	<a class="button" href="/work/day">9 March</a>
+	<a class="button" href="/work/day">10 March</a>
+</div>
 
-	<input type="hidden" name="request-token" value="{{$data.RequestToken}}"/>
+<label for="">Work Calendar</label>
 
-	<label for="">Activity</label>
-	<div class="actions actions-fit">
-		{{range $activityName := $data.ActivityNames}}
-			<button {{if (eq $activityName $data.CurrentActivity.Name)}}class="button-active" {{end}} type="submit" name="select-activity" value="{{$activityName}}">{{$activityName}}</button>
-		{{end}}
-		<button type="submit" name="select-activity" value="">Finish</button>
-		<div class="clear"></div>
-	</div>
+<table class="calendar">
+	<tr class="caption-row">
+		<th>M</th><th>T</th><th>W</th><th>T</th><th>F</th><th>S</th><th>S</th>
+		<td class="total"></td>
+	</tr>
+	<tr>
+		<td><a href="#">1</a></td>
+		<td class="submitted"><a href="#">2<div class="badge">5h</div></a></td>
+		<td><a href="#">3</a></td>
+		<td class="submitted"><a href="#">4<div class="badge">3h</div></a></td>
+		<td><a href="#">5</a></td>
+		<td><a href="#">6</a></td>
+		<td><a href="#">7</a></td>
+		<td class="total"><a href="#">8h</a></td>
+	</tr>
+	<tr class="current-week">
+		<td class="submitted">8<div class="badge">9h</div></td>
+		<td class="todo"><a href="#">9</a></td>
+		<td class="submitted">10<div class="badge">7h</div></td>
+		<td class="today todo">11</td>
+		<td>12</td>
+		<td>13</td>
+		<td>14</td>
+		<td class="total">16h</td>
+	</tr>
+	<tr>
+		<td>15</td><td>16</td><td>17</td><td>18</td><td>19</td><td>20</td><td>21</td>
+		<td class="total"></td>
+	</tr>
+	<tr>
+		<td>22</td><td>23</td><td>24</td><td>25</td><td>26</td><td>27</td><td>28</td>
+		<td class="total"></td>
+	</tr>
+	<tr class="total-row">
+		<td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+		<td class="total">24h</td>
+	</tr>
+</table>
 
-	<label for="">Project</label>
-	<div class="actions actions-fit">
-		{{range $project := $data.Projects}}
-			<button {{if (eq $project.ID $data.CurrentActivity.PID)}}class="button-active" {{end}} type="submit" name="select-activity" value="{{$project.ID}}">{{$project.Name}}: {{$project.ShortDescription}}</button>
-		{{end}}
-		<div class="clear"></div>
-	</div>
+<label for="">Month Statistics</label>
 
-</form>
+<div>
+	<a class="button" href="#">9 March</a>
+	<a class="button" href="#">10 March</a>
+</div>
 {{end}}
 
 {{template "footer" . }}

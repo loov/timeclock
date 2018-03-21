@@ -63,6 +63,35 @@ func (server *Server) ServeOverview(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+func (server *Server) ServeDay(w http.ResponseWriter, r *http.Request) {
+	postError, err := r.Cookie("post-error")
+	if err != nil {
+		postError = &http.Cookie{}
+	}
+
+	http.SetCookie(w, &http.Cookie{Name: "post-error", MaxAge: -1})
+
+	requestToken := createToken()
+	http.SetCookie(w, &http.Cookie{
+		Path:   "/",
+		Name:   "request-token",
+		Value:  requestToken,
+		MaxAge: 0,
+	})
+
+	DefaultActivities, err := server.Database.DefaultActivities()
+	if err != nil {
+		log.Println(err)
+	}
+
+	server.Templates.Present(w, r, "work/day.html", map[string]interface{}{
+		"PostError":    postError.Value,
+		"RequestToken": requestToken,
+
+		"DefaultActivities": DefaultActivities,
+	})
+}
+
 /*
 func (server *Server) handleSubmitDay(w http.ResponseWriter, r *http.Request) error {
 	if err := r.ParseForm(); err != nil {

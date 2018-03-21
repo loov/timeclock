@@ -35,7 +35,6 @@ input[type="button"].button-active {
 	border-bottom: 4px solid #46A8FF;
 }
 
-
 .error {
 	display: block;
 	background: #fee;
@@ -43,6 +42,67 @@ input[type="button"].button-active {
 	border: 1px solid #fcc;
 }
 
+/* .calendar */
+
+.calendar {
+	padding: 0.5em;
+	text-align: center;
+	border: 1px solid #ccc;
+}
+
+.calendar tr {
+	color: #666;
+}
+
+.calendar th {
+	color: #888;
+	font-weight: normal;
+}
+.calendar td { padding: 0; }
+.calendar th, .calendar td a {
+	position: relative;
+	text-align: center;
+	padding: 0.5em 0.5em;
+	height: 2em;
+	width: 2em;
+	line-height: 2em;
+	font-weight: 300;
+}
+.calendar td a {
+	display: block;
+	color: inherit;
+	font-weight: inherit;
+	text-decoration: none;
+}
+
+.calendar tr.caption-row { border-bottom: 1px solid #ccc; }
+.calendar tr.total-row   { border-top: 1px solid #ccc; }
+.calendar td.total       { border-left: 1px solid #ccc; font-size: 0.8em; font-style: italic; }
+
+.calendar tr.current-week {}
+.calendar tr.current-week td { color: #000; font-weight: bold; }
+.calendar td.submitted {
+	background: #beffbd;
+}
+.calendar td.today {
+	outline: 4px solid rgba(0,0,0,0.5);
+}
+.calendar td.todo {
+	background: #ff4668;
+}
+.calendar td .badge {
+	position: absolute;
+	bottom: 0;
+	right: 0;
+
+	border-radius: 100%;
+
+	font-size: 0.8em;
+	font-style: italic;
+	height: 1.3em;
+	line-height: 1.3em;
+	width: 1.3em;
+}
 
 /* .actions-fit describes list of elements dynamically sized */
 

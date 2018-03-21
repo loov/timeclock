@@ -1,0 +1,63 @@
+{{template "head" . }}
+{{with $data := . }}
+
+<label for="">9 March 2018</label>
+
+<form method="post">
+	{{ if $data.PostError }}
+	<div class="error">{{$data.PostError}}</div>
+	{{ end }}
+	<input type="hidden" name="request-token" value="{{$data.RequestToken}}"/>
+
+	<div>
+		<label><b>Project: XYZ</b></label><br>
+		<div class="actions actions-fit">
+			{{range $activityName := $data.DefaultActivities}}
+			<button name="select-activity" value="{{$activityName}}">{{$activityName}}</button>
+			{{end}}
+		</div>
+		<div class="actions actions-fit">
+			<button name="">1h</button>
+			<button name="">2h</button>
+			<button name="">3h</button>
+			<button name="">4h</button>
+			<button name="">5h</button>
+			<button name="">6h</button>
+			<button name="">7h</button>
+			<button name="">8h</button>
+			<button name="">9h</button>
+			<button name="">10h</button>
+		</div>
+		<div class="actions actions-fit">
+			<button name="">0min</button>
+			<button name="">15min</button>
+			<button name="">30min</button>
+			<button name="">45min</button>
+		</div>
+	</div>
+
+	<div>
+		<label><b>Project: QRZ</b></label><br>
+		<div class="actions actions-fit">
+			<button>Plumbing</button>
+			<button>5h 15min</button>
+			<button>Remove</button>
+		</div>
+		<div class="actions actions-fit">
+			<button>Welding</button>
+			<button>3h 30min</button>
+			<button>Remove</button>
+		</div>
+	</div>
+</form>
+
+{{end}}
+
+{{template "footer" . }}
+
+<div class="actions actions-fit">
+
+-               <button type="submit" name="select-activity" value="">Finish</button>
+-               <div class="clear"></div>
+-       </div>
++<table class="calendar">
