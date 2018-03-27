@@ -53,6 +53,11 @@ h1, h2, h3, h4, h5, h6 {
 	color: #222;
 }
 
+.nav__item:hover {
+	border-bottom: 4px solid #46A8FF;
+	background: #d7ecff;
+}
+
 .nav__item.nav__item-active {
 	border-bottom: 4px solid #46A8FF;
 }
@@ -75,7 +80,7 @@ h1, h2, h3, h4, h5, h6 {
 	background: #f9fafb;
 	padding: 0.3em 0.5em;
 }
-.input-table .input-table__cell-noborder {
+.input-table .input-table__cell--noborder {
 	border: 0;
 	background: transparent;
 }
@@ -86,9 +91,10 @@ h1, h2, h3, h4, h5, h6 {
 	padding: 0.3em 0.5em;
 	width: 100%;
 }
-.input-table__button {
-	color: #666;
+.input-table__icon-button {
+	color: #aaa;
 	background: #fff;
+	font-weight: bold;
 	border: 0;
 	width: 100%;
 	margin-left: 0.2rem;
@@ -96,14 +102,14 @@ h1, h2, h3, h4, h5, h6 {
 	border-radius: 3px;
 	text-align: center;
 }
-.input-table__button:hover {
+.input-table__icon-button:hover {
 	color: #000;
 	background: #f0f0f0;
 }
-.input-table__button-negative:hover {
+.input-table__icon-button--negative:hover {
 	background: #e6a4a4 !important;
 }
-.input-table__button-positive:hover {
+.input-table__icon-button--positive:hover {
 	background: #b7e6a4 !important;
 }
 

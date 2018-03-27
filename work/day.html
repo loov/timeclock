@@ -52,13 +52,13 @@
 				<col style="width:30%;">
 				<col style="width:30%;">
 				<col style="width:4em;">
-				<col style="width:3em;">
+				<col style="width:2em;">
 			</colgroup>  
 			<tr>
 				<th>Project</th>
 				<th>Activity</th>
 				<th>HH:MM</th>
-				<th class="input-table__cell-noborder"></th>
+				<th class="input-table__cell--noborder"></th>
 			</tr>
 		</thead>
 		<tbody>
@@ -67,19 +67,19 @@
 				<td><input type="text" list="project"></td>
 				<td><input type="text" list="activity"></td>
 				<td><input type="text"></td>
-				<td class="input-table__cell-noborder">
-					<button class="input-table__button input-table__button-negative" tabindex=-1>clear</button>
+				<td class="input-table__cell--noborder">
+					<button class="input-table__icon-button input-table__icon-button--negative" tabindex=-1 title="Clear">✖</button>
 				</td>
 			</tr>
 			{{ end }}
 		</tbody>
 		<tfoot>
 			<tr>
-				<td class="input-table__cell-noborder"></td>
-				<td class="input-table__cell-noborder"></td>
-				<td class="input-table__cell-noborder"></td>
-				<td class="input-table__cell-noborder">
-					<button class="input-table__button input-table__button-positive" tabindex=-1>add</button>
+				<td class="input-table__cell--noborder"></td>
+				<td class="input-table__cell--noborder"></td>
+				<td class="input-table__cell--noborder"></td>
+				<td class="input-table__cell--noborder">
+					<button class="input-table__icon-button input-table__icon-button--positive" tabindex=-1 title="Add Row">✚</button>
 				</td>
 			</tr>
 		</tfoot>
