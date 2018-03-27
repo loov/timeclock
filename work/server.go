@@ -5,6 +5,8 @@ import (
 	"encoding/hex"
 	"log"
 	"net/http"
+
+	"github.com/loov/timeclock/project"
 )
 
 func createToken() string {
@@ -89,6 +91,13 @@ func (server *Server) ServeDay(w http.ResponseWriter, r *http.Request) {
 		"RequestToken": requestToken,
 
 		"DefaultActivities": DefaultActivities,
+		"Projects": []project.Project{
+			{ID: 1, Name: "Alpha"},
+			{ID: 2, Name: "Beta"},
+			{ID: 3, Name: "Gamma"},
+			{ID: 4, Name: "Delta"},
+		},
+		"Entries": [10]Activity{},
 	})
 }
 

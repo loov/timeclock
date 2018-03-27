@@ -1,6 +1,6 @@
 {{template "head" . }}
-{{with $data := . }}
 
+{{with $data := . }}
 <div>
 	{{ range $report := $data.Reports }}
 	<label><b>{{$report.Start.Format "2006-01-02"}}</b></label>
@@ -14,7 +14,6 @@
 	</table>
 	{{end}}
 </div>
-
-
 {{end}}
-{{template "footer" . }}
+
+{{template "foot" . }}

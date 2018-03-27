@@ -1,63 +1,95 @@
 {{template "head" . }}
 {{with $data := . }}
 
-<label for="">9 March 2018</label>
-
 <form method="post">
+	<h1>Day Report</h1>
+
+	<table class="input-table">
+		<colgroup>
+			<col style="width:10%;">
+			<col style="width:30%;">
+		</colgroup>
+		<tr>
+			<th>Worker</th>
+			<td><input type="text" value="Egon Elbre" readonly></td>
+		</tr>
+		<tr>
+			<th>Date</th>
+			<td><input type="text" value="2018-03-28" readonly></td>
+		</tr>
+		<tr>
+			<th>Total Hours</th>
+			<td><input type="text" value="30h" readonly></td>
+		</tr>
+		<tr>
+			<th>Total Driven</th>
+			<td><input type="text" value="55km" readonly></td>
+		</tr>
+	</table>
+
 	{{ if $data.PostError }}
 	<div class="error">{{$data.PostError}}</div>
 	{{ end }}
 	<input type="hidden" name="request-token" value="{{$data.RequestToken}}"/>
 
-	<div>
-		<label><b>Project: XYZ</b></label><br>
-		<div class="actions actions-fit">
-			{{range $activityName := $data.DefaultActivities}}
-			<button name="select-activity" value="{{$activityName}}">{{$activityName}}</button>
-			{{end}}
-		</div>
-		<div class="actions actions-fit">
-			<button name="">1h</button>
-			<button name="">2h</button>
-			<button name="">3h</button>
-			<button name="">4h</button>
-			<button name="">5h</button>
-			<button name="">6h</button>
-			<button name="">7h</button>
-			<button name="">8h</button>
-			<button name="">9h</button>
-			<button name="">10h</button>
-		</div>
-		<div class="actions actions-fit">
-			<button name="">0min</button>
-			<button name="">15min</button>
-			<button name="">30min</button>
-			<button name="">45min</button>
-		</div>
-	</div>
+	<datalist id="project">
+	{{ range $value := $data.Projects -}}
+		<option value="{{$value.ID}} - {{$value.Name}}"></option>
+	{{- end }}
+	</datalist>
 
-	<div>
-		<label><b>Project: QRZ</b></label><br>
-		<div class="actions actions-fit">
-			<button>Plumbing</button>
-			<button>5h 15min</button>
-			<button>Remove</button>
-		</div>
-		<div class="actions actions-fit">
-			<button>Welding</button>
-			<button>3h 30min</button>
-			<button>Remove</button>
-		</div>
+	<datalist id="activity">
+	{{ range $value := $data.DefaultActivities -}}
+		<option value="{{$value}}"></option>
+	{{- end }}
+	</datalist>
+
+	<h3>Worked on:</h3>
+
+	<table class="input-table">
+		<thead>
+			<colgroup>
+				<col style="width:30%;">
+				<col style="width:30%;">
+				<col style="width:4em;">
+				<col style="width:3em;">
+			</colgroup>  
+			<tr>
+				<th>Project</th>
+				<th>Activity</th>
+				<th>HH:MM</th>
+				<th class="input-table__cell-noborder"></th>
+			</tr>
+		</thead>
+		<tbody>
+			{{ range $index := $data.Entries }}
+			<tr>
+				<td><input type="text" list="project"></td>
+				<td><input type="text" list="activity"></td>
+				<td><input type="text"></td>
+				<td class="input-table__cell-noborder">
+					<button class="input-table__button input-table__button-negative" tabindex=-1>clear</button>
+				</td>
+			</tr>
+			{{ end }}
+		</tbody>
+		<tfoot>
+			<tr>
+				<td class="input-table__cell-noborder"></td>
+				<td class="input-table__cell-noborder"></td>
+				<td class="input-table__cell-noborder"></td>
+				<td class="input-table__cell-noborder">
+					<button class="input-table__button input-table__button-positive" tabindex=-1>add</button>
+				</td>
+			</tr>
+		</tfoot>
+	</table>
+	
+	<div class="form-footer">
+		<input class="save-button" type="submit" value="Save">
 	</div>
 </form>
 
 {{end}}
 
-{{template "footer" . }}
-
-<div class="actions actions-fit">
-
--               <button type="submit" name="select-activity" value="">Finish</button>
--               <div class="clear"></div>
--       </div>
-+<table class="calendar">
+{{template "foot" . }}
