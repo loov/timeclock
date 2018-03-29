@@ -1,6 +1,12 @@
 (function(Table) {
+	var MIN_HOURS = 0;
+	var MAX_HOURS = 20;
+
 	Table.ClearRow = function(event) {
 		if (!event) return;
+		event.preventDefault();
+		event.stopPropagation();
+
 		var target = event.target;
 		if (!target) return;
 
@@ -20,12 +26,15 @@
 
 	Table.RoundUpHours = function(event) {
 		if (!event) return;
+		event.preventDefault();
+		event.stopPropagation();
+
 		var target = event.target;
 		if (!target) return;
 		if (target.tagName != "INPUT") return;
 
 		var hours = parseFloat(target.value);
-		if (isNaN(hours) || (hours <= 0) || (hours >= 20)) {
+		if (isNaN(hours) || (hours <= MIN_HOURS) || (hours >= MAX_HOURS)) {
 			target.value = "";
 			return;
 		}
