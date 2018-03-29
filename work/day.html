@@ -2,7 +2,13 @@
 {{with $data := . }}
 
 <form method="post">
+	<input type="hidden" name="request-token" value="{{$data.RequestToken}}"/>
+
 	<h1>Day Report</h1>
+
+	{{ if $data.PostError }}
+	<div class="error">{{$data.PostError}}</div>
+	{{ end }}
 
 	<table class="input-table">
 		<colgroup>
@@ -27,23 +33,6 @@
 		</tr>
 	</table>
 
-	{{ if $data.PostError }}
-	<div class="error">{{$data.PostError}}</div>
-	{{ end }}
-	<input type="hidden" name="request-token" value="{{$data.RequestToken}}"/>
-
-	<datalist id="project">
-	{{ range $value := $data.Projects -}}
-		<option value="{{$value.ID}} - {{$value.Name}}"></option>
-	{{- end }}
-	</datalist>
-
-	<datalist id="activity">
-	{{ range $value := $data.DefaultActivities -}}
-		<option value="{{$value}}"></option>
-	{{- end }}
-	</datalist>
-	
 	<div class="separator"></div>
 
 	<table class="input-table">
@@ -57,19 +46,32 @@
 			<tr>
 				<th>Project</th>
 				<th>Activity</th>
-				<th></th>
+				<th>Amount</th>
 				<th class="input-table__cell--noborder"></th>
 			</tr>
 		</thead>
 		<tbody>
 			{{ range $index, $activity := $data.Activities }}
 			<tr>
-				<td><select name="Activities[{{$index}}].Project" type="text" list="project">
-					<option value=""></option>
-					{{range $project := $data.Projects}}<option value="{{$project.ID}}" {{if eq $project.ID $activity.Project}}selected{{end}}>[{{$project.ID}}] {{$project.Name}}</option>{{end}}
-				</select></td>
-				<td><input name="Activities[{{$index}}].Activity" type="text" list="activity" value="{{$activity.Name}}"></td>
-				<td><input name="Activities[{{$index}}].Amount" type="text" {{if $activity.Duration}}value="{{$activity.Duration.Hours}}"{{end}}></td>
+				<td>
+					<select name="Activities[{{$index}}].Project" type="text">
+						<option value=""></option>
+						{{range $project := $data.Projects}}
+							<option value="{{$project.ID}}" {{if eq $project.ID $activity.Project}}selected{{end}}>[{{$project.ID}}] {{$project.Name}}</option>
+						{{end}}
+					</select>
+				</td>
+				<td>
+					<select name="Activities[{{$index}}].Activity" type="text">
+						<option value=""></option>
+						{{range $value := $data.DefaultActivities}}
+							<option value="{{$value}}" {{if eq $value $activity.Name}}selected{{end}}>{{$value}}</option>
+						{{end}}
+					</select>
+				</td>
+				<td>
+					<input name="Activities[{{$index}}].Amount" type="text" {{if $activity.Duration}}value="{{$activity.Duration.Hours}}"{{end}}>
+				</td>
 				<td class="input-table__cell--noborder">
 					<button class="input-table__icon-button input-table__icon-button--negative" tabindex=-1 title="Clear">✖</button>
 				</td>
