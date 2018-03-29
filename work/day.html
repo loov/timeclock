@@ -73,7 +73,7 @@
 					<input name="Activities[{{$index}}].Amount" type="text" {{if $activity.Duration}}value="{{$activity.Duration.Hours}}"{{end}}>
 				</td>
 				<td class="input-table__cell--noborder">
-					<button class="input-table__icon-button input-table__icon-button--negative" tabindex=-1 title="Clear">✖</button>
+					<button type="button" onclick="Table.ClearRow(event)" class="input-table__icon-button input-table__icon-button--negative" tabindex=-1 title="Clear">✖</button>
 				</td>
 			</tr>
 			{{ end }}

@@ -36,6 +36,7 @@ func main() {
 
 	http.HandleFunc("/work", Work.ServeOverview)
 	http.HandleFunc("/work/day", Work.ServeDay)
+
 	// http.HandleFunc("/work/submit", Work.ServeSubmitDay)
 
 	/*
