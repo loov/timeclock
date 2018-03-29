@@ -43,8 +43,8 @@
 		<option value="{{$value}}"></option>
 	{{- end }}
 	</datalist>
-
-	<h3>Worked on:</h3>
+	
+	<div class="separator"></div>
 
 	<table class="input-table">
 		<thead>
@@ -57,16 +57,19 @@
 			<tr>
 				<th>Project</th>
 				<th>Activity</th>
-				<th>HH:MM</th>
+				<th></th>
 				<th class="input-table__cell--noborder"></th>
 			</tr>
 		</thead>
 		<tbody>
-			{{ range $index := $data.Entries }}
+			{{ range $index, $activity := $data.Activities }}
 			<tr>
-				<td><input type="text" list="project"></td>
-				<td><input type="text" list="activity"></td>
-				<td><input type="text"></td>
+				<td><select name="Activities[{{$index}}].Project" type="text" list="project">
+					<option value=""></option>
+					{{range $project := $data.Projects}}<option value="{{$project.ID}}" {{if eq $project.ID $activity.Project}}selected{{end}}>[{{$project.ID}}] {{$project.Name}}</option>{{end}}
+				</select></td>
+				<td><input name="Activities[{{$index}}].Activity" type="text" list="activity" value="{{$activity.Name}}"></td>
+				<td><input name="Activities[{{$index}}].Amount" type="text" {{if $activity.Duration}}value="{{$activity.Duration.Hours}}"{{end}}></td>
 				<td class="input-table__cell--noborder">
 					<button class="input-table__icon-button input-table__icon-button--negative" tabindex=-1 title="Clear">✖</button>
 				</td>
@@ -85,9 +88,9 @@
 		</tfoot>
 	</table>
 	
-	<div class="form-footer">
-		<input class="save-button" type="submit" value="Save">
-	</div>
+	<div class="separator"></div>
+
+	<input class="save-button" type="submit" value="Save">
 </form>
 
 {{end}}

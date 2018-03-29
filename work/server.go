@@ -3,8 +3,12 @@ package work
 import (
 	"crypto/rand"
 	"encoding/hex"
+	"fmt"
 	"log"
 	"net/http"
+	"regexp"
+	"strconv"
+	"time"
 
 	"github.com/loov/timeclock/project"
 )
@@ -65,10 +69,62 @@ func (server *Server) ServeOverview(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+var rxActivityField = regexp.MustCompile(`^Activities\[(\d+)\]\.([[:alnum:]]+)$`)
+
 func (server *Server) ServeDay(w http.ResponseWriter, r *http.Request) {
 	postError, err := r.Cookie("post-error")
 	if err != nil {
 		postError = &http.Cookie{}
+	}
+
+	const DefaultNumberOfActivitites = 10
+	const MaxNumberOfActivities = 50
+
+	activities := make([]Activity, DefaultNumberOfActivitites)
+
+	if r.Method == http.MethodPost {
+		r.ParseForm()
+		for key, values := range r.Form {
+			if len(values) != 1 || (values[0] == "") {
+				continue
+			}
+			value := values[0]
+
+			matches := rxActivityField.FindStringSubmatch(key)
+			fmt.Println(key, value, matches)
+			if len(matches) == 0 {
+				continue
+			}
+
+			index, err := strconv.Atoi(matches[1])
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusBadRequest)
+				return
+			}
+
+			if index < 0 || index > MaxNumberOfActivities {
+				http.Error(w, "Too many activities.", http.StatusBadRequest)
+				return
+			}
+
+			if len(activities) < index {
+				activities = append(activities, make([]Activity, index-len(activities))...)
+			}
+			activity := &activities[index]
+
+			switch matches[2] {
+			case "Project":
+				id, _ := strconv.Atoi(value)
+				activity.Project = project.ID(id)
+			case "Amount":
+				amount, _ := strconv.Atoi(value)
+				activity.Duration = time.Duration(amount * int(time.Hour))
+			case "Activity":
+				activity.Name = value
+			default:
+				log.Printf("Unknown property %q=%q", key, value)
+			}
+		}
 	}
 
 	http.SetCookie(w, &http.Cookie{Name: "post-error", MaxAge: -1})
@@ -81,7 +137,7 @@ func (server *Server) ServeDay(w http.ResponseWriter, r *http.Request) {
 		MaxAge: 0,
 	})
 
-	DefaultActivities, err := server.Database.DefaultActivities()
+	defaultActivities, err := server.Database.DefaultActivities()
 	if err != nil {
 		log.Println(err)
 	}
@@ -90,14 +146,14 @@ func (server *Server) ServeDay(w http.ResponseWriter, r *http.Request) {
 		"PostError":    postError.Value,
 		"RequestToken": requestToken,
 
-		"DefaultActivities": DefaultActivities,
+		"DefaultActivities": defaultActivities,
 		"Projects": []project.Project{
 			{ID: 1, Name: "Alpha"},
 			{ID: 2, Name: "Beta"},
 			{ID: 3, Name: "Gamma"},
 			{ID: 4, Name: "Delta"},
 		},
-		"Entries": [10]Activity{},
+		"Activities": activities,
 	})
 }
 

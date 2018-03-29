@@ -18,6 +18,10 @@ h1, h2, h3, h4, h5, h6 {
 	color: #444;
 }
 
+.separator {
+	height: 2.5em;
+}
+
 /* */
 
 .error {
@@ -86,11 +90,13 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .input-table label,
-.input-table input {
+.input-table input,
+.input-table select {
 	border: 0;
 	padding: 0.3em 0.5em;
 	width: 100%;
 }
+
 .input-table__icon-button {
 	color: #aaa;
 	background: #fff;
@@ -101,16 +107,28 @@ h1, h2, h3, h4, h5, h6 {
 	padding: 0.3em 0.5em;
 	border-radius: 3px;
 	text-align: center;
+	
+	transition: 
+		background ease-in-out 0.1s,
+		color ease-in-out 0.1s;
 }
 .input-table__icon-button:hover {
 	color: #000;
 	background: #f0f0f0;
 }
+.input-table__icon-button--negative {
+	color: #e68a8a;
+}
 .input-table__icon-button--negative:hover {
-	background: #e6a4a4 !important;
+	color: #fff;
+	background: #e68a8a !important;
+}
+.input-table__icon-button--positive {
+	color: #52ad2d;
 }
 .input-table__icon-button--positive:hover {
-	background: #b7e6a4 !important;
+	color: #fff;
+	background: #52ad2d !important;
 }
 
 @media (max-width: 400px) {
