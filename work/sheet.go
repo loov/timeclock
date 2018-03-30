@@ -10,7 +10,7 @@ import (
 // Activities represents storage for work.Activities-s
 type Activities interface {
 	// WorkerSheet returns activities for a worker
-	WorkerSheet(worker user.ID, from, to time.Time) (Sheet, error)
+	WorkerSheet(worker user.ID, start, end time.Time) (*Sheet, error)
 
 	// Submit adds a new entry
 	Submit(activities []Activity) error
@@ -50,7 +50,7 @@ type Activity struct {
 // Sheet represents a day/week list of activities
 type Sheet struct {
 	// Dates associated
-	From, To time.Time
+	Start, End time.Time
 
 	// Worker contains a worker, when there is only one worker for all activities
 	Worker user.ID
@@ -66,7 +66,7 @@ type Sheet struct {
 }
 
 type Summary struct {
-	ByWorker   map[user.ID]time.Duration
-	ByActivity map[ActivityName]time.Duration
-	ByProject  map[project.ID]time.Duration
+	Worker   map[user.ID]time.Duration
+	Activity map[ActivityName]time.Duration
+	Project  map[project.ID]time.Duration
 }

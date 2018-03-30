@@ -34,9 +34,41 @@ func (db *Database) DefaultActivities() ([]string, error) {
 	return []string{"Plumbing", "Welding", "Construction"}, nil
 }
 
+func (db *Database) createSheet(worker user.ID, project project.ID, start, end time.Time) *Sheet {
+	sheet := &Sheet{}
+	sheet.Start, sheet.End = start, end
+	sheet.Worker, sheet.Project = worker, project
+
+	for _, act := range db.activities {
+		if worker != 0 && worker != act.Worker {
+			continue
+		}
+		if project != 0 && project != act.Project {
+			continue
+		}
+		if !start.IsZero() && act.Time.Before(start) {
+			continue
+		}
+		if !end.IsZero() && act.Time.After(end) {
+			continue
+		}
+
+		sheet.Activities = append(sheet.Activities, act)
+	}
+
+	for i := range sheet.Activities {
+		act := &sheet.Activities[i]
+		sheet.Duration += act.Duration
+	}
+
+	return sheet
+}
+
 // WorkerSheet returns activities for a worker
-func (db *Database) WorkerSheet(worker user.ID, from, to time.Time) (Sheet, error) {
-	return Sheet{}, nil
+func (db *Database) WorkerSheet(worker user.ID, start, end time.Time) (*Sheet, error) {
+	db.mu.Lock()
+	defer db.mu.Unlock()
+	return db.createSheet(worker, 0, start, end), nil
 }
 
 // Submit adds a new entry
