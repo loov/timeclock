@@ -120,7 +120,7 @@ func (server *Server) ServeDaySheet(w http.ResponseWriter, r *http.Request) {
 				amount, _ := strconv.Atoi(value)
 				activity.Duration = time.Duration(amount * int(time.Hour))
 			case "Activity":
-				activity.Name = value
+				activity.Name = ActivityName(value)
 			default:
 				log.Printf("Unknown property %q=%q", key, value)
 			}

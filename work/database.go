@@ -6,40 +6,102 @@ import (
 	"time"
 
 	"github.com/loov/timeclock/project"
+	"github.com/loov/timeclock/user"
 )
 
 var (
-	ErrSheetDoesNotExist = errors.New("sheet does not exist")
+	ErrActivityDoesNotExist = errors.New("activity does not exist")
 )
 
-var _ Sheets = &Database{}
+var _ Activities = &Database{}
 
 type Database struct {
 	mu sync.Mutex
 
-	lastSheetID    SheetID
 	lastActivityID ActivityID
 
-	sheets     []*Sheet
-	activities []*Activity
+	activities map[ActivityID]Activity
 	projects   []*project.Project
 }
 
 func NewDatabase() *Database {
-	return &Database{}
+	db := &Database{}
+	db.activities = make(map[ActivityID]Activity)
+	return db
 }
 
 func (db *Database) DefaultActivities() ([]string, error) {
 	return []string{"Plumbing", "Welding", "Construction"}, nil
 }
 
-func (db *Database) Overview(from, to time.Time) ([]Overview, error) {
-	return nil, nil
-}
-func (db *Database) FullOverview(from, to time.Time) ([]FullOverview, error) {
-	return nil, nil
+// WorkerSheet returns activities for a worker
+func (db *Database) WorkerSheet(worker user.ID, from, to time.Time) (Sheet, error) {
+	return Sheet{}, nil
 }
 
+// Submit adds a new entry
+func (db *Database) Submit(activities []Activity) error {
+	modified := time.Now()
+
+	db.mu.Lock()
+	defer db.mu.Unlock()
+
+	for i := range activities {
+		act := &activities[i]
+		db.lastActivityID++
+		act.ID = db.lastActivityID
+		act.Modified = modified
+		db.activities[act.ID] = *act
+	}
+
+	return nil
+}
+
+// Update updates existing activies with the appropriate ID-s
+func (db *Database) Update(activities []Activity) error {
+	modified := time.Now()
+
+	db.mu.Lock()
+	defer db.mu.Unlock()
+
+	for _, act := range activities {
+		_, ok := db.activities[act.ID]
+		if !ok {
+			return ErrActivityDoesNotExist
+		}
+	}
+
+	for i := range activities {
+		act := &activities[i]
+		act.Modified = modified
+		db.activities[act.ID] = *act
+	}
+
+	return nil
+}
+
+// Delete deletes activities
+func (db *Database) Delete(activities []Activity) error {
+	db.mu.Lock()
+	defer db.mu.Unlock()
+
+	for _, act := range activities {
+		_, ok := db.activities[act.ID]
+		if !ok {
+			return ErrActivityDoesNotExist
+		}
+	}
+
+	for i := range activities {
+		act := &activities[i]
+		delete(db.activities, act.ID)
+		act.ID = 0
+	}
+
+	return nil
+}
+
+/*
 func (db *Database) findSheetIndex(id SheetID) int {
 	for i, sheet := range db.sheets {
 		if sheet.ID == id {
@@ -82,7 +144,7 @@ func (db *Database) Update(sheet *Sheet) error {
 		db.sheets[index] = sheet
 		return nil
 	}
-	return ErrSheetDoesNotExist
+	return ErrActivityDoesNotExist
 }
 
 func (db *Database) Delete(entryID SheetID) error {
@@ -94,5 +156,6 @@ func (db *Database) Delete(entryID SheetID) error {
 		db.sheets = append(db.sheets[:index], db.sheets[index+1:]...)
 		return nil
 	}
-	return ErrSheetDoesNotExist
+	return ErrActivityDoesNotExist
 }
+*/

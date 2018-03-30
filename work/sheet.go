@@ -7,75 +7,66 @@ import (
 	"github.com/loov/timeclock/user"
 )
 
-// Sheets represents storage for work.Sheet-s
-type Sheets interface {
-	// Overview returns information about day status
-	Overview(from, to time.Time) ([]Overview, error)
-	FullOverview(from, to time.Time) ([]FullOverview, error)
+// Activities represents storage for work.Activities-s
+type Activities interface {
+	// WorkerSheet returns activities for a worker
+	WorkerSheet(worker user.ID, from, to time.Time) (Sheet, error)
 
 	// Submit adds a new entry
-	Submit(sheet *Sheet) (SheetID, error)
-	Update(sheet *Sheet) error
-	Delete(sheetID SheetID) error
-}
-
-// SheetID is an unique identifier for an entry
-type SheetID uint64
-
-// Sheet represents a day/week submission by a worker
-type Sheet struct {
-	// ID is the unique id
-	ID SheetID
-	// Date associated
-	Date time.Time
-	// Worker who created this entry
-	Worker user.ID
-
-	// UpdatedAt is the last time this entry was modified
-	UpdatedAt time.Time
-
-	// list of activities associated with this sheet
-	Activities []*Activity
-	// total duration of the sheet
-	Duration time.Duration
-
-	// Locked means that the entry cannot be modified without special permissions
-	Locked bool
+	Submit(activities []Activity) error
+	// Update updates existing activies with the appropriate ID-s
+	Update(activities []Activity) error
+	// Delete deletes activities
+	Delete(activities []Activity) error
 }
 
 // ActivityID is an unique identifier for activity
-type ActivityID uint64
+type ActivityID int
+
+type ActivityName string
 
 // Activity represents one activity in a work.Sheet
 type Activity struct {
-	SheetID SheetID
-	ID      ActivityID
+	ID ActivityID
 
-	// Date associated
-	Date time.Time
+	// Time associated with this entry
+	Time time.Time
+	// Modified is last modified time for this activity
+	Modified time.Time
 	// Worker who created this entry
 	Worker user.ID
 	// Associated project
 	Project project.ID
 
 	// Name of the activity
-	Name string
+	Name ActivityName
 	// Duration is the time spent on this activity
 	Duration time.Duration
-}
 
-type Overview struct {
-	Date   time.Time
-	Total  time.Duration
+	// Locked is a computed property showing it shouldn't be modified further
 	Locked bool
 }
 
-type FullOverview struct {
-	Overview
+// Sheet represents a day/week list of activities
+type Sheet struct {
+	// Dates associated
+	From, To time.Time
 
-	Sheets []SheetID
+	// Worker contains a worker, when there is only one worker for all activities
+	Worker user.ID
 
+	// Project contains a project, when there is only one project for all activities
+	Project project.ID
+
+	// list of activities associated with this sheet
+	Activities []Activity
+
+	// total duration of the activities
+	Duration time.Duration
+}
+
+type Summary struct {
 	ByWorker   map[user.ID]time.Duration
-	ByActivity map[string]time.Duration
+	ByActivity map[ActivityName]time.Duration
 	ByProject  map[project.ID]time.Duration
 }
