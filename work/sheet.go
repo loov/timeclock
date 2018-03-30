@@ -7,25 +7,25 @@ import (
 	"github.com/loov/timeclock/user"
 )
 
-// Sheet represents a work-sheet
-type Sheet interface {
+// Sheets represents storage for work.Sheet-s
+type Sheets interface {
 	// Overview returns information about day status
 	Overview(from, to time.Time) ([]Overview, error)
 	FullOverview(from, to time.Time) ([]FullOverview, error)
 
 	// Submit adds a new entry
-	Submit(entry *Entry) (EntryID, error)
-	Update(entry *Entry) error
-	Delete(entry EntryID) error
+	Submit(sheet *Sheet) (SheetID, error)
+	Update(sheet *Sheet) error
+	Delete(sheetID SheetID) error
 }
 
-// EntryID is an unique identifier for an entry
-type EntryID uint64
+// SheetID is an unique identifier for an entry
+type SheetID uint64
 
-// Entry represents a day/week submission by a worker
-type Entry struct {
+// Sheet represents a day/week submission by a worker
+type Sheet struct {
 	// ID is the unique id
-	ID EntryID
+	ID SheetID
 	// Date associated
 	Date time.Time
 	// Worker who created this entry
@@ -34,9 +34,9 @@ type Entry struct {
 	// UpdatedAt is the last time this entry was modified
 	UpdatedAt time.Time
 
-	// list of activities associated with this Entry
+	// list of activities associated with this sheet
 	Activities []*Activity
-	// total duration of the entry
+	// total duration of the sheet
 	Duration time.Duration
 
 	// Locked means that the entry cannot be modified without special permissions
@@ -46,10 +46,10 @@ type Entry struct {
 // ActivityID is an unique identifier for activity
 type ActivityID uint64
 
-// Activity represents one activity in a work.Entry
+// Activity represents one activity in a work.Sheet
 type Activity struct {
-	Entry EntryID
-	ID    ActivityID
+	SheetID SheetID
+	ID      ActivityID
 
 	// Date associated
 	Date time.Time
@@ -73,7 +73,7 @@ type Overview struct {
 type FullOverview struct {
 	Overview
 
-	Entries []EntryID
+	Sheets []SheetID
 
 	ByWorker   map[user.ID]time.Duration
 	ByActivity map[string]time.Duration

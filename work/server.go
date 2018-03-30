@@ -61,7 +61,7 @@ func (server *Server) ServeOverview(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 	}
 
-	server.Templates.Present(w, r, "work/work.html", map[string]interface{}{
+	server.Templates.Present(w, r, "work/overview.html", map[string]interface{}{
 		"PostError":    postError.Value,
 		"RequestToken": requestToken,
 
@@ -71,7 +71,7 @@ func (server *Server) ServeOverview(w http.ResponseWriter, r *http.Request) {
 
 var rxActivityField = regexp.MustCompile(`^Activities\[(\d+)\]\.([[:alnum:]]+)$`)
 
-func (server *Server) ServeDay(w http.ResponseWriter, r *http.Request) {
+func (server *Server) ServeDaySheet(w http.ResponseWriter, r *http.Request) {
 	postError, err := r.Cookie("post-error")
 	if err != nil {
 		postError = &http.Cookie{}
@@ -142,7 +142,7 @@ func (server *Server) ServeDay(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 	}
 
-	server.Templates.Present(w, r, "work/day.html", map[string]interface{}{
+	server.Templates.Present(w, r, "work/day-sheet.html", map[string]interface{}{
 		"PostError":    postError.Value,
 		"RequestToken": requestToken,
 

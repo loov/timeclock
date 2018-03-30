@@ -35,7 +35,7 @@ func main() {
 	http.Handle("/assets/", http.StripPrefix("/assets/", assets))
 
 	http.HandleFunc("/work", Work.ServeOverview)
-	http.HandleFunc("/work/day", Work.ServeDay)
+	http.HandleFunc("/work/day", Work.ServeDaySheet)
 
 	// http.HandleFunc("/work/submit", Work.ServeSubmitDay)
 

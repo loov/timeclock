@@ -9,18 +9,18 @@ import (
 )
 
 var (
-	ErrEntryDoesNotExist = errors.New("entry does not exist")
+	ErrSheetDoesNotExist = errors.New("sheet does not exist")
 )
 
-var _ Sheet = &Database{}
+var _ Sheets = &Database{}
 
 type Database struct {
 	mu sync.Mutex
 
-	lastEntryID    EntryID
+	lastSheetID    SheetID
 	lastActivityID ActivityID
 
-	entries    []*Entry
+	sheets     []*Sheet
 	activities []*Activity
 	projects   []*project.Project
 }
@@ -40,54 +40,59 @@ func (db *Database) FullOverview(from, to time.Time) ([]FullOverview, error) {
 	return nil, nil
 }
 
-func (db *Database) Submit(entry *Entry) (EntryID, error) {
+func (db *Database) findSheetIndex(id SheetID) int {
+	for i, sheet := range db.sheets {
+		if sheet.ID == id {
+			return i
+		}
+	}
+	return -1
+}
+
+func (db *Database) Submit(sheet *Sheet) (SheetID, error) {
 	db.mu.Lock()
 	defer db.mu.Unlock()
 
-	entry.UpdatedAt = time.Now()
+	sheet.UpdatedAt = time.Now()
 
-	db.lastEntryID++
-	entry.ID = db.lastEntryID
+	db.lastSheetID++
+	sheet.ID = db.lastSheetID
 
-	for _, activity := range entry.Activities {
+	for _, activity := range sheet.Activities {
 		db.lastActivityID++
 		activity.ID = db.lastActivityID
-		activity.Entry = entry.ID
-		activity.Date = entry.Date
-		activity.Worker = entry.Worker
+		activity.SheetID = sheet.ID
+		activity.Date = sheet.Date
+		activity.Worker = sheet.Worker
 
 		db.activities = append(db.activities, activity)
 	}
 
-	db.entries = append(db.entries, entry)
+	db.sheets = append(db.sheets, sheet)
 
-	return entry.ID, nil
+	return sheet.ID, nil
 }
 
-func (db *Database) Update(entry *Entry) error {
+func (db *Database) Update(sheet *Sheet) error {
 	db.mu.Lock()
 	defer db.mu.Unlock()
 
-	for i, en := range db.entries {
-		if en.ID == entry.ID {
-			db.entries[i] = entry
-			return nil
-		}
+	index := db.findSheetIndex(sheet.ID)
+	if index >= 0 {
+		db.sheets[index] = sheet
+		return nil
 	}
-
-	return ErrEntryDoesNotExist
+	return ErrSheetDoesNotExist
 }
 
-func (db *Database) Delete(entryID EntryID) error {
+func (db *Database) Delete(entryID SheetID) error {
 	db.mu.Lock()
 	defer db.mu.Unlock()
 
-	for i, en := range db.entries {
-		if en.ID == entryID {
-			db.entries = append(db.entries[:i], db.entries[i+1:]...)
-			return nil
-		}
+	index := db.findSheetIndex(entryID)
+	if index >= 0 {
+		db.sheets = append(db.sheets[:index], db.sheets[index+1:]...)
+		return nil
 	}
-
-	return ErrEntryDoesNotExist
+	return ErrSheetDoesNotExist
 }
