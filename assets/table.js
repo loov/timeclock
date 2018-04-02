@@ -1,7 +1,4 @@
 (function(Table) {
-	var MIN_HOURS = 0;
-	var MAX_HOURS = 20;
-
 	Table.ClearRow = function(event) {
 		if (!event) return;
 		event.preventDefault();
@@ -34,7 +31,7 @@
 		if (target.tagName != "INPUT") return;
 
 		var hours = parseFloat(target.value);
-		if (isNaN(hours) || (hours <= MIN_HOURS) || (hours >= MAX_HOURS)) {
+		if (isNaN(hours)) {
 			target.value = "";
 			return;
 		}

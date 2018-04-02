@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/loov/timeclock/project"
+	"github.com/loov/timeclock/user"
 )
 
 func createToken() string {
@@ -48,24 +49,33 @@ func (server *Server) ServeOverview(w http.ResponseWriter, r *http.Request) {
 
 	http.SetCookie(w, &http.Cookie{Name: "post-error", MaxAge: -1})
 
-	requestToken := createToken()
-	http.SetCookie(w, &http.Cookie{
-		Path:   "/",
-		Name:   "request-token",
-		Value:  requestToken,
-		MaxAge: 0,
-	})
+	now := time.Now()
+	year, month, day := time.Now().Date()
 
-	DefaultActivities, err := server.Database.DefaultActivities()
-	if err != nil {
-		log.Println(err)
+	var start, end time.Time
+	if day < 15 {
+		start = now.AddDate(0, -1, -day).Truncate(24 * time.Hour)
+		end = now.AddDate(0, 1, -day).Truncate(24 * time.Hour)
+	} else {
+		start = now.AddDate(0, 0, -day).Truncate(24 * time.Hour)
+		end = now.AddDate(0, 2, -day).Truncate(24 * time.Hour)
 	}
+	_, _ = year, month
+
+	fmt.Println(start)
+	fmt.Println(end)
+
+	sheet, err := server.Database.WorkerSheet(1, start, end)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	_ = sheet
+
+	// (worker user.ID, project project.ID, start, end time.Time) *Sheet {
 
 	server.Templates.Present(w, r, "work/overview.html", map[string]interface{}{
-		"PostError":    postError.Value,
-		"RequestToken": requestToken,
-
-		"DefaultActivities": DefaultActivities,
+		"PostError": postError.Value,
 	})
 }
 
@@ -91,7 +101,6 @@ func (server *Server) ServeDaySheet(w http.ResponseWriter, r *http.Request) {
 			value := values[0]
 
 			matches := rxActivityField.FindStringSubmatch(key)
-			fmt.Println(key, value, matches)
 			if len(matches) == 0 {
 				continue
 			}
@@ -147,6 +156,11 @@ func (server *Server) ServeDaySheet(w http.ResponseWriter, r *http.Request) {
 		"RequestToken": requestToken,
 
 		"DefaultActivities": defaultActivities,
+
+		"Worker": user.User{
+			ID:   1,
+			Name: "Egon Elbre",
+		},
 		"Projects": []project.Project{
 			{ID: 1, Name: "Alpha"},
 			{ID: 2, Name: "Beta"},
