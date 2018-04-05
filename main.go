@@ -16,7 +16,7 @@ import (
 )
 
 var (
-	addr = flag.String("listen", ":80", "http server `address`")
+	addr = flag.String("listen", "127.0.0.1:8080", "http server `address`")
 )
 
 func main() {
@@ -70,7 +70,7 @@ func main() {
 	http.HandleFunc("/favicon.ico", ServeFavIcon)
 
 	log.Println("Starting server on", *addr)
-	http.ListenAndServe(*addr, nil)
+	log.Println(http.ListenAndServe(*addr, nil))
 }
 
 func ServeFavIcon(w http.ResponseWriter, r *http.Request) {
