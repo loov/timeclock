@@ -35,10 +35,7 @@ func (db *Database) DefaultActivities() ([]string, error) {
 }
 
 func (db *Database) createSheet(worker user.ID, project project.ID, start, end time.Time) *Sheet {
-	sheet := &Sheet{}
-	sheet.Start, sheet.End = start, end
-	sheet.Worker, sheet.Project = worker, project
-
+	activities := []Activity{}
 	for _, act := range db.activities {
 		if worker != 0 && worker != act.Worker {
 			continue
@@ -53,13 +50,11 @@ func (db *Database) createSheet(worker user.ID, project project.ID, start, end t
 			continue
 		}
 
-		sheet.Activities = append(sheet.Activities, act)
+		activities = append(activities, act)
 	}
 
-	for i := range sheet.Activities {
-		act := &sheet.Activities[i]
-		sheet.Duration += act.Duration
-	}
+	sheet := NewSheet(activities)
+	sheet.Start, sheet.End = start, end
 
 	return sheet
 }

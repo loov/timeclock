@@ -2,6 +2,17 @@
 {{with $data := . }}
 
 <label for="">Unsubmitted Work</label>
+
+<pre>
+	{{ .Recent }}
+</pre>
+
+<div> 
+	{{ range $day := .Recent.SummarizeByDay }}
+	<div title="{{ range $day.Activities }}{{.Name}}:{{.Duration.Hours}}{{print "\n"}}{{ end }}">{{ FormatDay $day.Start }} : {{ $day.Duration.Hours }}</div>
+	{{ end }}
+</div>
+
 <div>
 	<a class="button" href="/work/day">9 March</a>
 	<a class="button" href="/work/day">10 March</a>

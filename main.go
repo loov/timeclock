@@ -11,6 +11,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/loov/timeclock/work"
 )
@@ -103,6 +104,9 @@ func (templates Templates) Present(w http.ResponseWriter, r *http.Request, name 
 	w.Header().Set("Content-Type", "text/html")
 
 	funcs := template.FuncMap{
+		"FormatDay": func(t time.Time) string {
+			return t.Format("02 Jan 2006")
+		},
 		"RequestPath": func() string {
 			return r.URL.Path
 		},

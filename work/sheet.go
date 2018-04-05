@@ -1,6 +1,7 @@
 package work
 
 import (
+	"sort"
 	"time"
 
 	"github.com/loov/timeclock/project"
@@ -51,6 +52,8 @@ type Activity struct {
 type Sheet struct {
 	// Dates associated
 	Start, End time.Time
+	// Latest modified time
+	Modified time.Time
 
 	// Worker contains a worker, when there is only one worker for all activities
 	Worker user.ID
@@ -65,8 +68,68 @@ type Sheet struct {
 	Duration time.Duration
 }
 
-type Summary struct {
-	Worker   map[user.ID]time.Duration
-	Activity map[ActivityName]time.Duration
-	Project  map[project.ID]time.Duration
+func NewSheet(activities []Activity) *Sheet {
+	sheet := &Sheet{}
+	sheet.Activities = activities
+	if len(activities) == 0 {
+		return sheet
+	}
+
+	act := activities[0]
+	sheet.Start, sheet.End = act.Time, act.Time
+	sheet.Modified = act.Modified
+	sheet.Worker = act.Worker
+	sheet.Project = act.Project
+	sheet.Duration = act.Duration
+
+	for _, act := range activities[1:] {
+		if act.Modified.After(sheet.Modified) {
+			sheet.Modified = act.Modified
+		}
+		if act.Time.Before(sheet.Start) {
+			sheet.Start = act.Time
+		}
+		if act.Time.After(sheet.End) {
+			sheet.End = act.Time
+		}
+		if sheet.Worker != act.Worker {
+			sheet.Worker = 0
+		}
+		if sheet.Project != act.Project {
+			sheet.Project = 0
+		}
+		sheet.Duration += act.Duration
+	}
+
+	return sheet
+}
+
+func (sheet *Sheet) Before(b *Sheet) bool {
+	if sheet.Start.Equal(b.Start) {
+		return sheet.End.Before(b.End)
+	}
+	return sheet.Start.Before(b.Start)
+}
+
+func (sheet *Sheet) SummarizeByDay() []*Sheet {
+	byDay := map[time.Time][]Activity{}
+	for _, act := range sheet.Activities {
+		day := Day(act.Time.UTC())
+		byDay[day] = append(byDay[day], act)
+	}
+
+	list := []*Sheet{}
+	for _, activities := range byDay {
+		list = append(list, NewSheet(activities))
+	}
+	sort.Slice(list, func(i, k int) bool {
+		return list[i].Before(list[k])
+	})
+
+	return list
+}
+
+func Day(t time.Time) time.Time {
+	year, month, day := t.Date()
+	return time.Date(year, month, day, 0, 0, 0, 0, t.Location())
 }

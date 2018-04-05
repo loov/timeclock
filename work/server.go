@@ -3,7 +3,6 @@ package work
 import (
 	"crypto/rand"
 	"encoding/hex"
-	"fmt"
 	"log"
 	"net/http"
 	"regexp"
@@ -50,7 +49,7 @@ func (server *Server) ServeOverview(w http.ResponseWriter, r *http.Request) {
 	http.SetCookie(w, &http.Cookie{Name: "post-error", MaxAge: -1})
 
 	now := time.Now()
-	year, month, day := time.Now().Date()
+	_, _, day := time.Now().Date()
 
 	var start, end time.Time
 	if day < 15 {
@@ -60,22 +59,16 @@ func (server *Server) ServeOverview(w http.ResponseWriter, r *http.Request) {
 		start = now.AddDate(0, 0, -day).Truncate(24 * time.Hour)
 		end = now.AddDate(0, 2, -day).Truncate(24 * time.Hour)
 	}
-	_, _ = year, month
-
-	fmt.Println(start)
-	fmt.Println(end)
 
 	sheet, err := server.Database.WorkerSheet(1, start, end)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	_ = sheet
-
-	// (worker user.ID, project project.ID, start, end time.Time) *Sheet {
 
 	server.Templates.Present(w, r, "work/overview.html", map[string]interface{}{
 		"PostError": postError.Value,
+		"Recent":    sheet,
 	})
 }
 
@@ -90,7 +83,7 @@ func (server *Server) ServeDaySheet(w http.ResponseWriter, r *http.Request) {
 	const DefaultNumberOfActivitites = 10
 	const MaxNumberOfActivities = 50
 
-	activities := make([]Activity, DefaultNumberOfActivitites)
+	activities := make([]Activity, 0, DefaultNumberOfActivitites)
 
 	if r.Method == http.MethodPost {
 		r.ParseForm()
@@ -116,10 +109,13 @@ func (server *Server) ServeDaySheet(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 
-			if len(activities) < index {
-				activities = append(activities, make([]Activity, index-len(activities))...)
+			if len(activities) <= index {
+				activities = append(activities, make([]Activity, index+1-len(activities))...)
 			}
 			activity := &activities[index]
+			activity.Time = time.Now()
+			activity.Modified = time.Now()
+			activity.Worker = 1
 
 			switch matches[2] {
 			case "Project":
@@ -134,6 +130,12 @@ func (server *Server) ServeDaySheet(w http.ResponseWriter, r *http.Request) {
 				log.Printf("Unknown property %q=%q", key, value)
 			}
 		}
+
+		server.Database.Submit(activities)
+	}
+
+	if len(activities) < DefaultNumberOfActivitites {
+		activities = append(activities, make([]Activity, DefaultNumberOfActivitites-len(activities))...)
 	}
 
 	http.SetCookie(w, &http.Cookie{Name: "post-error", MaxAge: -1})
