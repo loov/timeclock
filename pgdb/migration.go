@@ -21,8 +21,18 @@ type Migrations []*Migration
 
 func (migs Migrations) Run(db *Database) error {
 	// check whether we have versions table
-	err := db.QueryRow(`SELECT FROM Versions`).Scan()
-	if err == sql.ErrNoRows {
+	// query := `SELECT COUNT(1) FROM information_schema.tables WHERE table_name = $1 AND table_schema = (SELECT current_schema()) LIMIT 1`
+	// if err := p.db.QueryRow(query, "data_migrations").Scan(&count); err != nil {
+	// 	return err
+	// }
+
+	var count int
+	err := db.QueryRow(`SELECT COUNT(1) 
+		FROM information_schema.tables
+		WHERE table_name = lower($1) AND
+		table_schema = (SELECT current_schema())`, "Versions").Scan(&count)
+	if err == sql.ErrNoRows || count == 0 {
+		fmt.Println(err, count)
 		if err := versionTable.Run(db); err != nil {
 			return err
 		}

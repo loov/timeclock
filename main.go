@@ -13,11 +13,14 @@ import (
 	"strings"
 	"time"
 
+	"github.com/loov/timeclock/pgdb"
 	"github.com/loov/timeclock/work"
 )
 
 var (
 	addr = flag.String("listen", "127.0.0.1:8080", "http server `address`")
+
+	db = flag.String("db", "user=timeclock password=timeclock dbname=timeclock sslmode=disable", "database params")
 )
 
 func main() {
@@ -26,6 +29,20 @@ func main() {
 	host, port := os.Getenv("HOST"), os.Getenv("PORT")
 	if host != "" || port != "" {
 		*addr = host + ":" + port
+	}
+
+	db, err := pgdb.New("pgx", *db)
+	if err != nil {
+		log.Fatal(err)
+	}
+	err = db.DANGEROUS_DROP_ALL_TABLES()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = db.Init()
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	templates := Templates{}
