@@ -3,9 +3,20 @@ package project
 type ID uint64
 
 type Project struct {
-	ID   ID
+	ID         ID
+	CustomerID CustomerID
+
+	Slug string
 	Name string
 
-	ShortDescription  string
-	DefaultActivities []string
+	Activities  []string
+	Description string
+}
+
+type CustomerID uint64
+
+type Customer struct {
+	ID   CustomerID
+	Slug string
+	Name string
 }

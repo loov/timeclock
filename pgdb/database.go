@@ -2,11 +2,14 @@ package pgdb
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 
 	//TODO: switch to pgx
 	_ "github.com/lib/pq"
 )
+
+var todo = errors.New("TODO")
 
 type Database struct {
 	*sql.DB
@@ -101,6 +104,7 @@ var migrations = Migrations{
 
 					Slug TEXT NOT NULL,
 					Name TEXT NOT NULL,
+
 					Activities TEXT[] NOT NULL DEFAULT '{}',
 					
 					Description TEXT NOT NULL,
