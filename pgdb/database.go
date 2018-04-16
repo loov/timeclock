@@ -4,15 +4,16 @@ import (
 	"database/sql"
 	"fmt"
 
-	_ "github.com/jackc/pgx/stdlib"
+	//TODO: switch to pgx
+	_ "github.com/lib/pq"
 )
 
 type Database struct {
 	*sql.DB
 }
 
-func New(db, params string) (*Database, error) {
-	sdb, err := sql.Open(db, params)
+func New(params string) (*Database, error) {
+	sdb, err := sql.Open("postgres", params)
 	if err != nil {
 		return nil, fmt.Errorf("failed to open database: %s", err)
 	}
@@ -38,12 +39,27 @@ var migrations = Migrations{
 		Version: 1,
 		Steps: []string{
 			0: `CREATE TABLE Users (
-				ID    BIGSERIAL PRIMARY KEY,
-				Alias TEXT NOT NULL,
-				Name  TEXT NOT NULL,
-				Email TEXT NOT NULL,
+					ID    BIGSERIAL PRIMARY KEY,
+					Alias TEXT NOT NULL,
+					Name  TEXT NOT NULL,
+					Email TEXT NOT NULL,
 
-				Root  BOOL NOT NULL DEFAULT false
+					Root  BOOL NOT NULL DEFAULT false,
+
+					Created_At  TIMESTAMP NOT NULL DEFAULT current_timestamp,
+					Modified_At TIMESTAMP NOT NULL DEFAULT current_timestamp
+			)`,
+			1: `CREATE TABLE Roles (
+					UserID     INT8 PRIMARY KEY,
+					
+					Admin      BOOL NOT NULL DEFAULT false,
+					Accountant BOOL NOT NULL DEFAULT false,
+					Worker     BOOL NOT NULL DEFAULT false,
+
+					Created_At  TIMESTAMP NOT NULL DEFAULT current_timestamp,
+					Modified_At TIMESTAMP NOT NULL DEFAULT current_timestamp,
+
+					FOREIGN KEY (UserID) REFERENCES Users (ID)
 			)`,
 		},
 	}, {
@@ -51,33 +67,28 @@ var migrations = Migrations{
 		Version: 2,
 		Steps: []string{
 			0: `CREATE TABLE Credentials (
-					UserID   INT8,
+					UserID   INT8  NOT NULL,
 
 					Provider TEXT  NOT NULL,
 					Key      BYTEA NOT NULL,
+
+					Created_At  TIMESTAMP NOT NULL DEFAULT current_timestamp,
+					Modified_At TIMESTAMP NOT NULL DEFAULT current_timestamp,
 
 					FOREIGN KEY (UserID) REFERENCES Users (ID)
 			)`,
 		},
 	}, {
-		Name:    "Companies",
+		Name:    "Customers",
 		Version: 3,
 		Steps: []string{
-			0: `CREATE TABLE Companies (
+			0: `CREATE TABLE Customers (
 					ID   BIGSERIAL PRIMARY KEY,
-					Slug TEXT NOT NULL,
-					Name TEXT NOT NULL
-			)`,
-			1: `CREATE TABLE Roles (
-					UserID     INT8 PRIMARY KEY,
-					CompanyID  INT8,
-					
-					Admin      BOOL NOT NULL DEFAULT false,
-					Accountant BOOL NOT NULL DEFAULT false,
-					Worker     BOOL NOT NULL DEFAULT false,
-	
-					FOREIGN KEY (UserID) REFERENCES Users (ID),
-					FOREIGN KEY (CompanyID) REFERENCES Companies (ID)
+					Slug TEXT NOT NULL UNIQUE,
+					Name TEXT NOT NULL,
+
+					Created_At  TIMESTAMP NOT NULL DEFAULT current_timestamp,
+					Modified_At TIMESTAMP NOT NULL DEFAULT current_timestamp
 			)`,
 		},
 	}, {
@@ -85,11 +96,19 @@ var migrations = Migrations{
 		Version: 4,
 		Steps: []string{
 			0: `CREATE TABLE Projects (
-					ID   BIGSERIAL PRIMARY KEY,
+					ID          BIGSERIAL PRIMARY KEY,
+					CustomerID  INT8,
+
 					Slug TEXT NOT NULL,
 					Name TEXT NOT NULL,
+					Activities TEXT[] NOT NULL DEFAULT '{}',
+					
+					Description TEXT NOT NULL,
 
-					Activities TEXT[] NOT NULL DEFAULT '{}'
+					Created_At  TIMESTAMP NOT NULL DEFAULT current_timestamp,
+					Modified_At TIMESTAMP NOT NULL DEFAULT current_timestamp,
+
+					FOREIGN KEY (CustomerID) REFERENCES Customers (ID)
 			)`,
 			1: `CREATE TABLE Activities (
 					ID BIGSERIAL PRIMARY KEY,
@@ -103,8 +122,8 @@ var migrations = Migrations{
 
 					Locked   BOOL      NOT NULL DEFAULT false,
 					
-					CreatedAt  TIMESTAMP NOT NULL DEFAULT current_timestamp,
-					ModifiedAt TIMESTAMP NOT NULL DEFAULT current_timestamp,
+					Created_At  TIMESTAMP NOT NULL DEFAULT current_timestamp,
+					Modified_At TIMESTAMP NOT NULL DEFAULT current_timestamp,
 
 					FOREIGN KEY (WorkerID)  REFERENCES Users (ID),
 					FOREIGN KEY (ProjectID) REFERENCES Projects (ID)

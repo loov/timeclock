@@ -31,7 +31,7 @@ func main() {
 		*addr = host + ":" + port
 	}
 
-	db, err := pgdb.New("pgx", *db)
+	db, err := pgdb.New(*db)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -41,6 +41,11 @@ func main() {
 	}
 
 	err = db.Init()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = db.FakeDatabase()
 	if err != nil {
 		log.Fatal(err)
 	}
