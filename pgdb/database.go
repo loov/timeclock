@@ -102,8 +102,10 @@ var migrations = Migrations{
 					ID          BIGSERIAL PRIMARY KEY,
 					CustomerID  INT8,
 
-					Slug TEXT NOT NULL,
-					Name TEXT NOT NULL,
+					Slug      TEXT NOT NULL,
+					Name      TEXT NOT NULL,
+
+					Completed BOOL NOT NULL DEFAULT false,
 
 					Activities TEXT[] NOT NULL DEFAULT '{}',
 					

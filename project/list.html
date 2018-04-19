@@ -1,23 +1,31 @@
 {{template "head" .}}
+
+{{define "project-table" }}
+<table>
+	<thead>
+		<tr>
+			<th>Slug</th>
+			<th>Name</th>
+		</tr>
+	</thead>
+	<tbody>
+	{{ range $project := . }}
+		<tr>
+			<td>{{$project.Slug}}</td>
+			<td>{{$project.Name}}</td>
+		</tr>
+	{{end}}
+	</tbody>
+</table>
+{{end}}
+
 {{with $data := .}}
 <div>
-	<h1>Projects</h1>
-	<table>
-		<thead>
-			<tr>
-				<th>Slug</th>
-				<th>Name</th>
-			</tr>
-		</thead>
-		<tbody>
-		{{ range $project := $data.Projects }}
-			<tr>
-				<td>{{$project.Slug}}</td>
-				<td>{{$project.Name}}</td>
-			</tr>
-		{{end}}
-		</tbody>
-	</table>
+	<h1>Active Projects</h1>
+	{{ template "project-table" $data.Incomplete }}
+	
+	<h1>Completed</h1>
+	{{ template "project-table" $data.Complete }}
 </div>
 {{end}}
 {{template "foot" . }}

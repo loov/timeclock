@@ -13,6 +13,8 @@ type Project struct {
 	Slug string
 	Name string
 
+	Completed bool
+
 	Activities  []string
 	Description string
 }
@@ -23,6 +25,8 @@ type Info struct {
 
 	Slug string
 	Name string
+
+	Completed bool
 }
 
 type CustomerID uint64

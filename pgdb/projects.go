@@ -16,7 +16,7 @@ func (db *Projects) CreateProject(project project.Project) (project.ID, error) {
 
 func (db *Projects) Infos() ([]project.Info, error) {
 	rows, err := db.Query(`
-		SELECT ID, CustomerID, Slug, Name
+		SELECT ID, CustomerID, Slug, Name, Completed
 		FROM Projects
 		ORDER BY Name
 	`)
@@ -29,7 +29,7 @@ func (db *Projects) Infos() ([]project.Info, error) {
 	for rows.Next() {
 		var p project.Info
 		err := rows.Scan(
-			&p.ID, &p.CustomerID, &p.Slug, &p.Name,
+			&p.ID, &p.CustomerID, &p.Slug, &p.Name, &p.Completed,
 		)
 		if err != nil {
 			return projects, err

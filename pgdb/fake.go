@@ -163,10 +163,10 @@ func (db *faker) AddProject(customerId int64, projectName string) (int64, []stri
 	activities := fakeActivities()
 	result := db.QueryRow(`
 			INSERT INTO Projects
-			(CustomerID, Slug, Name, Activities, Description)
-			VALUES ($1, $2, $3, $4, $5)
+			(CustomerID, Slug, Name, Completed, Activities, Description)
+			VALUES ($1, $2, $3, $4, $5, $6)
 			RETURNING ID
-		`, customerId, fake.DigitsN(rIntBetween(3, 5)), projectName, pq.StringArray(activities), fake.Paragraphs())
+		`, customerId, fake.DigitsN(rIntBetween(3, 5)), projectName, rIntBetween(0, 2) == 0, pq.StringArray(activities), fake.Paragraphs())
 
 	var projectId int64
 	if err := result.Scan(&projectId); db.Failed(err) {
