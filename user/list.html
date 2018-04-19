@@ -6,7 +6,6 @@
 		<thead>
 			<tr>
 				<th>Name</th>
-				<th>Alias</th>
 				<th>Email</th>
 				<th>Roles</th>
 			</tr>
@@ -15,7 +14,6 @@
 		{{ range $user := $data.Users }}
 			<tr>
 				<td>{{$user.Name}}</td>
-				<td>{{$user.Alias}}</td>
 				<td>{{$user.Email}}</td>
 				<td>{{$user.Roles}}</td>
 			</tr>
