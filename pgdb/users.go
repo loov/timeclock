@@ -16,7 +16,7 @@ func (db *Users) FindCredentials(name string) error {
 	return todo
 }
 
-func (db *Users) List() ([]user.User, error) {
+func (db *Users) Workers() ([]user.User, error) {
 	rows, err := db.Query(`
 		SELECT 
 			Users.ID, Users.Alias, Users.Name, Users.Email, Users.Root,

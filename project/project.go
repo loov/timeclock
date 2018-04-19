@@ -1,5 +1,9 @@
 package project
 
+type Database interface {
+	Infos() ([]Info, error)
+}
+
 type ID uint64
 
 type Project struct {
@@ -11,6 +15,14 @@ type Project struct {
 
 	Activities  []string
 	Description string
+}
+
+type Info struct {
+	ID         ID
+	CustomerID CustomerID
+
+	Slug string
+	Name string
 }
 
 type CustomerID uint64

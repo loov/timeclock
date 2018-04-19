@@ -18,14 +18,14 @@ func NewServer(templates *site.Templates, users Database) *Server {
 	return server
 }
 
-func (server *Server) ServeList(w http.ResponseWriter, r *http.Request) {
-	users, err := server.Users.List()
+func (server *Server) ServeWorkers(w http.ResponseWriter, r *http.Request) {
+	users, err := server.Users.Workers()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	server.Templates.Present(w, r, "user/list.html", map[string]interface{}{
+	server.Templates.Present(w, r, "user/workers.html", map[string]interface{}{
 		"Users": users,
 	})
 }

@@ -2,6 +2,10 @@ package user
 
 import "strings"
 
+type Database interface {
+	Workers() ([]User, error)
+}
+
 type ID uint64
 
 type User struct {
@@ -34,8 +38,4 @@ func (r Roles) String() string {
 		xs = append(xs, "worker")
 	}
 	return strings.Join(xs, ", ")
-}
-
-type Database interface {
-	List() ([]User, error)
 }

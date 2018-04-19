@@ -1,21 +1,19 @@
 {{template "head" .}}
 {{with $data := .}}
 <div>
-	<h1>Users</h1>
+	<h1>Projects</h1>
 	<table>
 		<thead>
 			<tr>
+				<th>Slug</th>
 				<th>Name</th>
-				<th>Email</th>
-				<th>Roles</th>
 			</tr>
 		</thead>
 		<tbody>
-		{{ range $user := $data.Users }}
+		{{ range $project := $data.Projects }}
 			<tr>
-				<td>{{$user.Name}}</td>
-				<td>{{$user.Email}}</td>
-				<td>{{$user.Roles}}</td>
+				<td>{{$project.Slug}}</td>
+				<td>{{$project.Name}}</td>
 			</tr>
 		{{end}}
 		</tbody>

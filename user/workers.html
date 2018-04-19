@@ -1,0 +1,25 @@
+{{template "head" .}}
+{{with $data := .}}
+<div>
+	<h1>Workers</h1>
+	<table>
+		<thead>
+			<tr>
+				<th>Name</th>
+				<th>Email</th>
+				<th>Roles</th>
+			</tr>
+		</thead>
+		<tbody>
+		{{ range $user := $data.Users }}
+			<tr>
+				<td>{{$user.Name}}</td>
+				<td>{{$user.Email}}</td>
+				<td>{{$user.Roles}}</td>
+			</tr>
+		{{end}}
+		</tbody>
+	</table>
+</div>
+{{end}}
+{{template "foot" . }}

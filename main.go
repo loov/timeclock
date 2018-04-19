@@ -8,6 +8,8 @@ import (
 	"path/filepath"
 
 	"github.com/loov/timeclock/pgdb"
+
+	"github.com/loov/timeclock/project"
 	"github.com/loov/timeclock/site"
 	"github.com/loov/timeclock/user"
 	"github.com/loov/timeclock/work"
@@ -51,14 +53,18 @@ func main() {
 	Site := site.NewServer(Templates)
 	User := user.NewServer(Templates, db.Users())
 	Work := work.NewServer(Templates)
+	Project := project.NewServer(Templates, db.Projects())
 
 	assets := http.FileServer(http.Dir("assets"))
 	http.Handle("/assets/", http.StripPrefix("/assets/", assets))
 
 	http.HandleFunc("/", Site.ServeEmpty)
-	http.HandleFunc("/user", User.ServeList)
+	http.HandleFunc("/workers", User.ServeWorkers)
+
 	http.HandleFunc("/work", Work.ServeOverview)
 	http.HandleFunc("/work/day", Work.ServeDaySheet)
+
+	http.HandleFunc("/projects", Project.ServeInfos)
 
 	// http.HandleFunc("/work/submit", Work.ServeSubmitDay)
 
