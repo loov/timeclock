@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/loov/timeclock/project"
+	"github.com/loov/timeclock/site"
 	"github.com/loov/timeclock/user"
 )
 
@@ -29,11 +30,11 @@ type Templates interface {
 }
 
 type Server struct {
-	Templates Templates
+	Templates *site.Templates
 	Database  *Database
 }
 
-func NewServer(templates Templates) *Server {
+func NewServer(templates *site.Templates) *Server {
 	server := &Server{}
 	server.Templates = templates
 	server.Database = NewDatabase()

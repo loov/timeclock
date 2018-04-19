@@ -1,5 +1,7 @@
 package user
 
+import "strings"
+
 type ID uint64
 
 type User struct {
@@ -18,4 +20,22 @@ type Roles struct {
 	Admin      bool
 	Accountant bool
 	Worker     bool
+}
+
+func (r Roles) String() string {
+	var xs []string
+	if r.Admin {
+		xs = append(xs, "admin")
+	}
+	if r.Accountant {
+		xs = append(xs, "accountant")
+	}
+	if r.Worker {
+		xs = append(xs, "worker")
+	}
+	return strings.Join(xs, ", ")
+}
+
+type Database interface {
+	List() ([]User, error)
 }
